@@ -347,6 +347,25 @@ namespace libBAUtilCS
          /// Convert.ToChar(34).ToString + text + Convert.ToChar(34).ToString;
       }
 
+      /// <summary>
+      /// Mimics VB6's Space() function
+      /// </summary>
+      /// <param name="count">Number of space</param>
+      /// <returns>String of <paramref name="count"/> spaces</returns>
+      public static string Space(Int32 count)
+      {
+         return new System.String(' ', (int)count);
+      }
+
+      /// <summary>
+      /// Mimics VB6's Space() function
+      /// </summary>
+      /// <param name="count">Number of space</param>
+      /// <returns>String of <paramref name="count"/> spaces</returns>
+      public static string Space(uint count)
+      {
+         return new System.String(' ', (int)count);
+      }
       #region "Method String()"
       /// <summary>
       /// Mimics VB6's String() Function
@@ -360,6 +379,96 @@ namespace libBAUtilCS
          return new System.String(character, (int)count);
       }
 
+      #endregion
+
+      #region "Date formatting"
+         /// <summary>
+      /// Create a date string of format YYYYMMDD[[T]HHNNSS].
+      /// </summary>
+      /// <param name="dtmDate">Date/Time to format</param>
+      /// <param name="appendTime"><see langref="true"/> = append time to date</param>
+      /// <param name="dateSeparator">Character to separate date parts</param>
+      /// <param name="dateTimeSeparator">Character to separate date part from time part</param>
+      /// <returns>
+      /// Date/time formatted as string.
+      /// </returns>
+      public static string DateYMD(DateTime dtmDate, Boolean appendTime = false, string dateSeparator = "", 
+         string dateTimeSeparator = "T")
+      {
+
+         // Date part
+         string sResult = dtmDate.Year.ToString("0000") + dateSeparator + dtmDate.Month.ToString("00") + dateSeparator +
+            dtmDate.Day.ToString("00");
+
+
+         // Time part
+         if (appendTime == true)
+         {
+            sResult += dateTimeSeparator + dtmDate.Hour.ToString("00") + dtmDate.Minute.ToString("00") + dtmDate.Second.ToString("00");
+         }
+
+         return sResult;
+
+      }
+      #endregion
+
+      #region "VB6 String constants"
+      // ** Replacements for various handy VB6 string constants
+
+      /// <summary>
+      /// Mimics VB6's vbNewLine constant.
+      /// </summary>
+      /// <param name="n">Return this number of new lines</param>
+      /// <returns>OS-specific new line character(s)</returns>
+      public static string vbNewLine(Int32 n = 1)
+      {
+         string sResult = System.String.Empty;
+
+         for (Int32 i = 1; i <= n; i++)
+         {
+            sResult += Environment.NewLine;
+         }
+         return sResult;
+      }
+
+      /// <summary>
+      /// Mimics VB6's vbNullString constant
+      /// </summary>
+      /// <returns>String.Empty</returns>
+      public static string vbNullString()
+         {
+            return System.String.Empty;
+      }
+      
+      /// <summary>
+      /// Constant for a double quotation mark (").
+      /// </summary>
+      /// <param name="n">Number of DQs to return</param>
+      /// <returns><paramref name="n"/> "</returns>
+      public static string vbQuote(Int32 n = 1)
+      {
+         string sResult = System.String.Empty;
+         for (Int32 i = 1; i <= n; i++)
+         {
+            sResult += Convert.ToChar(34).ToString();
+         }
+         return sResult;
+      }
+
+   /// <summary>
+   /// Mimics VB6's vbTab constant.
+   /// </summary>
+   /// <param name="n">Number of tabs to return</param>
+   /// <returns><paramref name="n"/> tabs.</returns>
+   public static string vbTab(Int32 n = 1)
+      {
+         string sResult = System.String.Empty;
+         for (Int32 i = 1; i <= n; i++)
+         {
+            sResult += System.Convert.ToChar(9).ToString();
+         }
+         return sResult;
+      }
       #endregion
    } // class StringUtil
 }
