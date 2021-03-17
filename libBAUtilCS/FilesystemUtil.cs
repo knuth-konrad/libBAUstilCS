@@ -164,11 +164,11 @@ namespace libBAUtilCS
             {
                i = 0;
                // Generate a new file name that eventually doesn't exist in the target folder.Stop at 9999!
-               tempFile = NormalizePath(destPath) + destFile + "." + System.String.Format("{0}:0000", i) + destExt;
+               tempFile = NormalizePath(destPath) + destFile + "." + System.String.Format("{0:0000}", i) + destExt;
                while (Exists(tempFile) == true & i < 9999)
                {
                   i += 1;
-                  tempFile = NormalizePath(destPath) + destFile + "." + System.String.Format("{0}:0000", i) + destExt;
+                  tempFile = NormalizePath(destPath) + destFile + "." + System.String.Format("{0:0000}", i) + destExt;
                }
             }
             else

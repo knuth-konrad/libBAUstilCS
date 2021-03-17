@@ -42,6 +42,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="baUtil.cs" />
+    <Compile Include="FilesystemUtil.cs" />
+    <Compile Include="FileUtil.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="StringUtil.cs" />
   </ItemGroup>
