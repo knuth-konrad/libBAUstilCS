@@ -1,8 +1,7 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Text;
-using System.Threading.Tasks;
+// using System.Text;
+// using System.Threading.Tasks;
 
 namespace libBAUtilCS
 {
@@ -58,7 +57,6 @@ namespace libBAUtilCS
             writer.WriteLine(textLine);
          }
       }  // TxtWriteLine
-
 
    }  // class FileUtil
 }
