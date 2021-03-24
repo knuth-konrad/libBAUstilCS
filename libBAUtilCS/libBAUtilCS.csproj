@@ -42,6 +42,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="baUtil.cs" />
+    <Compile Include="DateTimeUtil.cs" />
     <Compile Include="FilesystemUtil.cs" />
     <Compile Include="FileUtil.cs" />
     <Compile Include="ObjectUtil.cs" />
