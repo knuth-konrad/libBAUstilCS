@@ -105,7 +105,7 @@ namespace libBAUtilCS
       /// </returns>
       public int Hour => this.Date.Hour;
 
-      public string ToDateIATA  => this.ToDateIATA(eIATADateType.DateLong, eIATADateCasing.ToUpper);
+      public string IATADateLong => this.ToDateIATA(eIATADateType.DateLong, eIATADateCasing.ToUpper);
 
       public string IATADateShort => this.ToDateIATA(eIATADateType.DateShort, eIATADateCasing.ToUpper);
 
@@ -135,7 +135,6 @@ namespace libBAUtilCS
       #endregion
 
       #region "Methods - Public"
-
       public DateTime Add(System.TimeSpan timeSpan)
       {
          return this.Date.Add(timeSpan);
@@ -176,7 +175,7 @@ namespace libBAUtilCS
          return this.Date.AddTicks(ticks);
       }
       
-     public DateTime AddYears(int years)
+      public DateTime AddYears(int years)
       {
          return this.Date.AddYears(years);
       }
@@ -216,57 +215,65 @@ namespace libBAUtilCS
          return DateTime.FromFileTimeUtc(dateData);
       }
 
-      /*
-         public Function FromOADate(ByVal d As Double) As DateTime
-            return DateTime.FromOADate(d)
-         End Function
+      public DateTime FromOADate(double d)
+      {
+         return DateTime.FromOADate(d);
+      }
+      
+      public string[] GetDateTimeFormats()
+      {
+         return this.Date.GetDateTimeFormats();
+      }
 
-         public Overloads Function GetDateTimeFormats() As String()
-            return this.Date.GetDateTimeFormats
-         End Function
+      public string[] GetDateTimeFormats(Char format)
+      {
+         return this.Date.GetDateTimeFormats(format);
+      }
 
-         public Overloads Function GetDateTimeFormats(ByVal format As Char) As String()
-            return this.Date.GetDateTimeFormats(format)
-         End Function
+      public string[] GetDateTimeFormats(Char format, System.IFormatProvider provider)
+      {
+         return this.Date.GetDateTimeFormats(format, provider);
+      }
 
-         public Overloads Function GetDateTimeFormats(ByVal format As Char, ByVal provider As System.IFormatProvider) As String()
-            return this.Date.GetDateTimeFormats(format, provider)
-         End Function
+      public string[] GetDateTimeFormats(System.IFormatProvider provider)
+      {
+         return this.Date.GetDateTimeFormats(provider);
+      }
 
-         public Overloads Function GetDateTimeFormats(ByVal provider As System.IFormatProvider) As String()
-            return this.Date.GetDateTimeFormats(provider)
-         End Function
+      public Boolean IsDaylightSavingTime()
+      {
+         return this.Date.IsDaylightSavingTime();
+      }
 
-         public Function IsDaylightSavingTime() As Boolean
-            return this.Date.IsDaylightSavingTime
-         End Function
+      public Boolean IsLeapYear(int year)
+      {
+         return DateTime.IsLeapYear(year);
+      }
 
-         public Function IsLeapYear(ByVal year As Integer) As Boolean
-            return DateTime.IsLeapYear(year)
-         End Function
+      public System.TimeSpan Subtract(DateTime value)
+      {
+         return this.Date.Subtract(value);
+      }
 
-         public Overloads Function Subtract(ByVal value As Date) As System.TimeSpan
-            return this.Date.Subtract(value)
-         End Function
+      public DateTime Subtract(System.TimeSpan value)
+      {
+         return this.Date.Subtract(value);
+      }
 
-         public Overloads Function Subtract(ByVal value As System.TimeSpan) As DateTime
-            return this.Date.Subtract(value)
-         End Function
-         */
-
-         /// <summary>
-         /// return the last day in a month
-         /// </summary>
-         /// <param name="month">Last day of this month</param>
-         /// <param name="year">Month in this year</param>
-         /// <returns>
-         /// Last day of given <paramref name="month"/> in <paramref name="year"/> as <see cref="System.DateTime" />
-         /// </returns>
+      /// <summary>
+      /// return the last day in a month
+      /// </summary>
+      /// <param name="month">Last day of this month</param>
+      /// <param name="year">Month in this year</param>
+      /// <returns>
+      /// Last day of given <paramref name="month"/> in <paramref name="year"/> as <see cref="System.DateTime" />
+      /// </returns>
       public static DateTime GetLastDayInMonth(Int32 month, Int32 year)
       { 
          if (month == 12)
          {
             month = 1;
+            year += 1;
          }
          else
          {
@@ -277,7 +284,6 @@ namespace libBAUtilCS
          TimeSpan tsp = new TimeSpan(1, 0, 0, 0);
 
          return dtm.Subtract(tsp);
-
       }
 
       /// <summary>
@@ -313,7 +319,6 @@ namespace libBAUtilCS
             sMonth = iataDate.Substring(2, 3);
             sYear = Right(iataDate, 2);
          }
-
 
          switch (sMonth.ToLower())
          {
@@ -370,7 +375,7 @@ namespace libBAUtilCS
       /// <summary>
       /// Converts a <see cref="System.DateTime"/> to a IATA date string
       /// </summary>
-      /// <returns><see cref="System.DateTime"/>Current <see cref="Date"/> as a string format (ddMMM)</returns>
+      /// <returns><see cref="System.DateTime"/>Current <see cref="DateTime"/> as a string format as (ddMMM)</returns>
       public string ToDateIATA()
       {
          // Upper case is default
@@ -383,10 +388,9 @@ namespace libBAUtilCS
       /// <param name="dateType">
       /// Format of IATA date <see cref="eIATADateType"/>
       /// </param>
-      /// <returns><see cref="System.DateTime"/>Current <see cref="Date"/> as a string format (ddMMM)</returns>
+      /// <returns><see cref="System.DateTime"/>Current <see cref="DateTime"/> as a string formatted as (ddMMM)</returns>
       public string ToDateIATA(eIATADateType dateType)
       {
-
          // Upper case is default
          if (dateType == eIATADateType.DateLong)
          {
@@ -396,7 +400,6 @@ namespace libBAUtilCS
          {
             return this.Date.ToString("ddMMM", System.Globalization.CultureInfo.InvariantCulture).ToUpper();
          }
-
       }
 
       /// <summary>
@@ -405,10 +408,9 @@ namespace libBAUtilCS
       /// <param name="nameCasing">
       /// Casing of IATA date <see cref="eIATADateCasing"/>
       /// </param>
-      /// <returns><see cref="System.DateTime"/>Current <see cref="Date"/> as a string format (ddMMM)</returns>
+      /// <returns><see cref="System.DateTime"/>Current <see cref="DateTime"/> as a string formatted as (ddMMM)</returns>
       public string ToDateIATA(eIATADateCasing nameCasing)
       { 
-
          switch (nameCasing)
          {
             case eIATADateCasing.ToLower:
@@ -420,8 +422,7 @@ namespace libBAUtilCS
             default:
                return this.Date.ToString("ddMMM", System.Globalization.CultureInfo.InvariantCulture).ToUpper();
          }
-
-         }
+      }
 
       /// <summary>
       /// Converts a <see cref="System.DateTime"/> to a IATA date string
@@ -505,6 +506,85 @@ namespace libBAUtilCS
       public string ToString(string format, System.IFormatProvider provider)
       {
          return this.Date.ToString(format, provider);
+      }
+      #endregion
+
+
+      #region "Constructor/Dispose"
+
+      public DateTimeUtil()
+      { 
+         this.Date = new DateTime();
+      }
+
+      /// <summary>
+      /// Initializes a new instance of the <see cref="DateTimeOffset"/> structure using the specified DateTime value.
+      /// </summary>
+      /// <param name="newDate">A date and time.</param>
+      public DateTimeUtil(DateTime newDate)
+      {
+         this.Date = newDate;
+      }
+
+      public DateTimeUtil(Int64 ticks)
+      { 
+         this.Date = new DateTime(ticks);
+      }
+
+      public DateTimeUtil(Int64 ticks, DateTimeKind kind)
+      {
+         this.Date = new DateTime(ticks, kind);
+      }
+
+      public DateTimeUtil(Int32 year, Int32 month, Int32 day)
+      {
+         this.Date = new DateTime(year, month, day);
+      }
+
+      public DateTimeUtil(Int32 year, Int32 month, Int32 day, System.Globalization.Calendar calendar)
+      {
+         this.Date = new DateTime(year, month, day, calendar);
+      }
+
+      public DateTimeUtil(Int32 year, Int32 month, Int32 day, Int32 hour, Int32 minute, Int32 second)
+      {
+         this.Date = new DateTime(year, month, day, hour, minute, second);
+      }
+
+      public DateTimeUtil(Int32 year, Int32 month, Int32 day, Int32 hour, Int32 minute, Int32 second, DateTimeKind kind)
+      {
+         this.Date = new DateTime(year, month, day, hour, minute, second, kind);
+      }
+
+      public DateTimeUtil(Int32 year, Int32 month, Int32 day, Int32 hour, Int32 minute, Int32 second, System.Globalization.Calendar calendar)
+      {
+         this.Date = new DateTime(year, month, day, hour, minute, second, calendar);
+      }
+
+      public DateTimeUtil(Int32 year, Int32 month, Int32 day, Int32 hour, Int32 minute, Int32 second, Int32 millisecond)
+      {
+         this.Date = new DateTime(year, month, day, hour, minute, second, millisecond);
+      }
+
+      public DateTimeUtil(Int32 year, Int32 month, Int32 day, Int32 hour, Int32 minute, Int32 second, Int32 millisecond, DateTimeKind kind)
+      {
+         this.Date = new DateTime(year, month, day, hour, minute, second, millisecond, kind);
+      }
+
+      public DateTimeUtil(Int32 year, Int32 month, Int32 day, Int32 hour, Int32 minute, Int32 second, Int32 millisecond, System.Globalization.Calendar calendar)
+      {
+         this.Date = new DateTime(year, month, day, hour, minute, second, millisecond, calendar);
+      }
+
+      public DateTimeUtil(Int32 year, Int32 month, Int32 day, Int32 hour, Int32 minute, Int32 second, Int32 millisecond, System.Globalization.Calendar calendar, DateTimeKind kind)
+      {
+
+         this.Date = new DateTime(year, month, day, hour, minute, second, millisecond, calendar, kind);
+      }
+
+      public DateTimeUtil(string iataDate)
+      {
+         this.DateTime = this.ToDate(iataDate);
       }
       #endregion
 
