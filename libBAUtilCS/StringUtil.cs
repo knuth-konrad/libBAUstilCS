@@ -323,11 +323,13 @@ namespace libBAUtilCS
          {
             if (startIndex + length > source.Length || length == 0)
             {
-               return source.Substring(startIndex - 1);
+               // return source.Substring(startIndex - 1);
+               return source.Substring(startIndex);
             }
             else
             {
-               return source.Substring(startIndex - 1, length);
+               // return source.Substring(startIndex - 1, length);
+               return source.Substring(startIndex, length);
             }
          }
          catch
@@ -366,7 +368,8 @@ namespace libBAUtilCS
       {
          return new System.String(' ', (int)count);
       }
-      #region "Method String()"
+
+      #region "Method StrRepeat()"
       /// <summary>
       /// Mimics VB6's String() Function
       /// </summary>
@@ -374,15 +377,29 @@ namespace libBAUtilCS
       /// <param name="count">Number of characters</param>
       /// <returns>String of <paramref name="count"/> x <paramref name="character"/></returns>
 
-      public static string String(char character, Int32 count)
+      public static string StrRepeat(char character, Int32 count)
       {
-         return new System.String(character, (int)count);
+         return new System.String(character, count);
+      }
+
+      public static string StrRepeat(string character, Int32 count)
+      {
+
+         // Safe guard
+         if (character.Length != 1)
+         {
+            throw new ArgumentOutOfRangeException("Length must be 1.", character);
+         }
+
+         char temp = character[0];
+
+         return new System.String(temp, count);
       }
 
       #endregion
 
       #region "Date formatting"
-         /// <summary>
+      /// <summary>
       /// Create a date string of format YYYYMMDD[[T]HHNNSS].
       /// </summary>
       /// <param name="dtmDate">Date/Time to format</param>

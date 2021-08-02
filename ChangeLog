@@ -1,2 +1,10 @@
-2021-10-30
+2021-08-02
+	- Separated data (company, author) from code in ConsoleUtils by moving these to ConUtilData.
+	
+	
+2021-07-27
+	- Add ConsoleUtil and CmdArgs.
+	
+	
+2021-01-30
    ** Initial commit **

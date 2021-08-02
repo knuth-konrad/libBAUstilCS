@@ -42,6 +42,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="baUtil.cs" />
+    <Compile Include="CmdArgs.cs" />
+    <Compile Include="ConsoleUtil.cs" />
+    <Compile Include="ConUtilData.cs" />
+    <Compile Include="CryptoUtil.cs" />
     <Compile Include="DateTimeUtil.cs" />
     <Compile Include="FilesystemUtil.cs" />
     <Compile Include="FileUtil.cs" />
