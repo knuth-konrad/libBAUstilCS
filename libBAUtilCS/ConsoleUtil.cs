@@ -190,5 +190,27 @@ namespace libECKDUtilCS
       }
    }  // WriteIndent
 
+      /// <summary>
+      /// Output text indented by (<paramref name="indentBy"/>) spaces
+      /// </summary>
+      /// <param name="text[]">Output text</param>
+      /// <param name="indentBy">Number of leading spaces</param>
+      /// <param name="addNewLine">Add a new line after the last line of <paramref name="text"/></param>
+      public static void WriteIndent(string[] text, Int32 indentBy, Boolean addNewLine = true)
+      {
+         for (int i = 0; i <= text.Length - 2; i++)
+         {
+            Console.WriteLine(String.Concat(new String(Convert.ToChar(" "), indentBy) + text[i]));
+         }
+         if (addNewLine == true)
+         {
+            Console.WriteLine(String.Concat(new String(Convert.ToChar(" "), indentBy) + text[text.Length - 1]));
+         }
+         else
+         {
+            Console.Write(String.Concat(new String(Convert.ToChar(" "), indentBy) + text[text.Length - 1]));
+         }
+      }  // WriteIndent
+
    }  // class ConsoleUtil
 }  // namespace libBAUtilCoreCS

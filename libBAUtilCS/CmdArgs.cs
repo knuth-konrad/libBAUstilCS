@@ -298,6 +298,31 @@ namespace libECKDUtilCS.Utils.Args
       }  // HasParameter
 
       /// <summary>
+      /// Determine if a certain parameter is present referring to it either
+      /// by its long or short form.
+      /// </summary>
+      /// <param name="keyShort">Parameter's name(<see cref = "KeyValue.KeyShort" />)</param>
+      /// <param name="keyLong">Parameter's name(<see cref = "KeyValue.KeyLong" />)</param>
+      /// <returns></returns>
+      public Boolean HasParameter(string keyShort, string keyLong)
+      {
+         foreach (KeyValue o in KeyValues)
+         {
+
+            if (CaseSensitive == true)
+            {
+               if (o.Key == keyShort || o.Key == keyLong) { return true; }
+            }
+            else
+            {
+               if (o.Key.ToLower() == keyShort.ToLower() || o.Key.ToLower() == keyLong.ToLower()) { return true; }
+            }
+         }
+
+         return false;
+      }  // HasParameter
+
+      /// <summary>
       /// Determine if a certain parameter is present
       /// </summary>
       /// <param name="paramlist">List of parameter names (<see cref="KeyValue.Key"/>)</param>
@@ -344,6 +369,36 @@ namespace libECKDUtilCS.Utils.Args
       }  // GetParameterByName
 
       /// <summary>
+      /// Return the corresponding KeyValue object
+      /// </summary>
+      /// <param name="keyShort">Parameter's name(<see cref = "KeyValue.KeyShort" />)</param>
+      /// <param name="keyLong">Parameter's name(<see cref = "KeyValue.KeyLong" />)</param>
+      /// <param name="caseSensitive">Treat the name as case-sensitive?</param>
+      /// <returns><see cref="KeyValue"/> whose <see cref="KeyValue.Key"/> equals <paramref name="key"/>.</returns>
+      public KeyValue GetParameterByName(string keyShort, string keyLong, Boolean caseSensitive = false)
+      {
+
+         // Safe guard
+         if (HasParameter(keyShort, keyLong) == false) { throw new ArgumentException("Parameter doesn't exist: " + keyShort + ", " + keyLong); }
+
+         foreach (KeyValue o in KeyValues)
+         {
+            if (caseSensitive == false)
+            {
+               if (o.Key.ToLower() == keyShort.ToLower() || o.Key.ToLower() == keyLong.ToLower()) { return o; }
+            }
+            else
+            {
+               if (o.Key == keyShort || o.Key == keyLong) { return o; }
+            }
+         }
+
+         // We should never reach this point
+         return null;
+
+      }  // GetParameterByName
+
+      /// <summary>
       /// Return the value of a parameter
       /// </summary>
       /// <param name="key">The parameter's name(<see cref = "KeyValue.Key" /></ param >
@@ -370,10 +425,38 @@ namespace libECKDUtilCS.Utils.Args
          return null;
       }  // GetValueByName
 
+      /// <summary>
+      /// Return the value of a parameter
+      /// </summary>
+      /// <param name="keyShort">Parameter's name(<see cref = "KeyValue.KeyShort" />)</param>
+      /// <param name="keyLong">Parameter's name(<see cref = "KeyValue.KeyLong" />)</param>
+      /// <param name="caseSensitive">Treat the name as case-sensitive?</param>
+      /// <returns></returns>
+      public Object GetValueByName(string keyShort, string keyLong, Boolean caseSensitive = false)
+      {
+
+         // Safe guard
+         if (HasParameter(keyShort, keyLong) == false) { throw new ArgumentException("Parameter doesn't exist: " + keyShort + ", " + keyLong); }
+
+         foreach (KeyValue o in KeyValues)
+         {
+            if (caseSensitive == false)
+            {
+               if (o.Key.ToLower() == keyShort || o.Key.ToLower() == keyLong) { return o.Value; }
+            }
+            else
+            {
+               if (o.Key == keyShort || o.Key == keyLong) { return o.Value; }
+            }
+         }
+         // We should never reach this point
+         return null;
+      }  // GetValueByName
+
       #endregion
 
       #region "Constructor/Dispose"
-      
+
       public CmdArgs()
       {
          DelimiterArgs = GetDefaultDelimiterForOS();
@@ -534,7 +617,7 @@ namespace libECKDUtilCS.Utils.Args
       public string Key
       {
          get
-         { // KeyLOng tales precedence
+         { // KeyLong tales precedence
             if (this.KeyLong.Length > 0)
             {
                return KeyLong;

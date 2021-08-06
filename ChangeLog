@@ -1,5 +1,9 @@
+2021-08-05
+	- Added overloads for CmdArgs.HasParameter, .GetParameterByName, .GetValueByName
+	- Added overloads for ConsoleUtil.WriteIndent
+
 2021-08-02
-	- Separated data (company, author) from code in ConsoleUtils by moving these to ConUtilData.
+	- Separated data (company, author) from code in ConsoleUtil by moving these to ConUtilData.
 	
 	
 2021-07-27
