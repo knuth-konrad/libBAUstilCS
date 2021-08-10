@@ -13,22 +13,23 @@ namespace libECKDUtilCS
    /// </summary>
    public class ConsoleUtil
    {
+
       // ToDo: Define colors for signaling certain states/events, e.g. green foreground = "good", red = "error"
 
       #region "Declarations"
       #endregion
 
-      #region "ConHeadline"
-         /// <summary>
-         /// Display an application intro
-         /// </summary>
-         /// <param name="appName">Name of the application</param>
-         /// <param name="versionMajor">Major version</param>
-         /// <param name="versionMinor">Minor version</param>
-         /// <param name="versionRevision">Revision</param>
-         /// <param name="versionBuild">Build</param>
+      #region "AppIntro"
+      /// <summary>
+      /// Display an application intro
+      /// </summary>
+      /// <param name="appName">Name of the application</param>
+      /// <param name="versionMajor">Major version</param>
+      /// <param name="versionMinor">Minor version</param>
+      /// <param name="versionRevision">Revision</param>
+      /// <param name="versionBuild">Build</param>
 
-         public static void ConHeadline(string appName, Int32 versionMajor,
+      public static void AppIntro(string appName, Int32 versionMajor,
                                               Int32 versionMinor = 0,
                                               Int32 versionRevision = 0,
                                               Int32 versionBuild=  0)
@@ -50,7 +51,7 @@ namespace libECKDUtilCS
          /// </summary>
          /// <param name="appName">Name of the application</param>
 
-         public static void ConHeadline(string appName)
+         public static void AppIntro(string appName)
 
          {
             Console.ForegroundColor = ConsoleColor.White;
@@ -63,7 +64,7 @@ namespace libECKDUtilCS
          /// </summary>
          /// <param name="appName">Name of the application</param>
          /// <param name="versionMajor">Major version</param>
-         public static void ConHeadline(string appName, Int32 versionMajor)
+         public static void AppIntro(string appName, Int32 versionMajor)
          {
             Console.ForegroundColor = ConsoleColor.White;
             Console.WriteLine(Chr(16) + " " + appName + " v" + versionMajor.ToString() + ".0 " + Chr(17));
@@ -75,12 +76,12 @@ namespace libECKDUtilCS
          /// </summary>
          /// <param name="mainAssembly">Assembly of the main executable</param>
          /// <example>
-         /// ConHeadline(System.Refelction.Assembly.GetEntryAssembly())
+         /// AppIntro(System.Refelction.Assembly.GetEntryAssembly())
          /// </example>
          /// <remarks>
          /// See https://docs.microsoft.com/en-us/dotnet/api/system.version?view=net-5.0
          /// </remarks>
-         public static void ConHeadline(Assembly mainAssembly)
+         public static void AppIntro(Assembly mainAssembly)
          {
             AssemblyName assemName = mainAssembly.GetName();
             Version ver = assemName.Version;
@@ -89,33 +90,36 @@ namespace libECKDUtilCS
             Console.WriteLine(Chr(16) + " {0} v{1}", assemName.Name, ver.ToString() + " " + Chr(17));
             Console.ForegroundColor = ConsoleColor.Gray;
       }
-      #endregion  // "ConHeadline"
+      #endregion  // "AppIntro"
 
-      #region "ConCopyright"
+      #region "AppCopyright"
 
-         ///' <summary>
-         ///' Display a copyright notice.
-         ///' </summary>
-         public static void ConCopyright(Boolean trailingBlankLine = true)
+      /// <summary>
+      /// Display a copyright notice.
+      /// </summary>
+      /// <param name="trailingBlankLine">Add a blank line afterwards.</param>
+      public static void AppCopyright(Boolean trailingBlankLine = true)
+      {
+         AppCopyright(DateTime.Now.Year.ToString(), ConUtilData.COPY_COMPANYNAME, trailingBlankLine);
+      }
+
+      /// <summary>
+      /// Display a copyright notice.
+      /// </summary>
+      /// <param name="companyName">Copyright owner</param>
+      /// <param name="trailingBlankLine">Add a blank line afterwards.</param>
+      public static void AppCopyright(string companyName, Boolean trailingBlankLine = true)
          {
-            ConCopyright(DateTime.Now.Year.ToString(), ConUtilData.COPY_COMPANYNAME, trailingBlankLine);
+            AppCopyright(DateTime.Now.Year.ToString(), companyName, trailingBlankLine);
          }
 
-         ///' <summary>
-         ///' Display a copyright notice.
-         ///' </summary>
-         ///' <param name="companyName">Copyright owner</param>
-         public static void ConCopyright(string companyName, Boolean trailingBlankLine = true)
-         {
-            ConCopyright(DateTime.Now.Year.ToString(), companyName, trailingBlankLine);
-         }
-
-      ///' <summary>
-      ///' Display a copyright notice.
-      ///' </summary>
-      ///' <param name="year">Copyrighted in year</param>
-      ///' <param name="companyName">Copyright owner</param>
-      public static void ConCopyright(string year, string companyName, Boolean trailingBlankLine = true)
+      /// <summary>
+      /// Display a copyright notice.
+      /// </summary>
+      /// <param name="year">Copyrighted in year</param>
+      /// <param name="companyName">Copyright owner</param>
+      /// <param name="trailingBlankLine">Add a blank line afterwards.</param>
+      public static void AppCopyright(string year, string companyName, Boolean trailingBlankLine = true)
       {
          Console.WriteLine(String.Format("Copyright {0} {1} by {2}. All rights reserved.", Chr(169), year, companyName));
          Console.WriteLine("Written by " + ConUtilData.COPY_AUTHOR);
@@ -125,7 +129,7 @@ namespace libECKDUtilCS
             Console.WriteLine("");
          }
       }
-      #endregion  // "ConCopyright"
+      #endregion  // "AppCopyright"
 
 
    /// <summary>
@@ -213,4 +217,5 @@ namespace libECKDUtilCS
       }  // WriteIndent
 
    }  // class ConsoleUtil
-}  // namespace libBAUtilCoreCS
+
+}  // namespace libECKDUtilCoreCS
