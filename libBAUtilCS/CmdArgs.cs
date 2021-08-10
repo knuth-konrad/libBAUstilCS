@@ -20,8 +20,17 @@ namespace libECKDUtilCS.Utils.Args
       public enum eArgumentDelimiterStyle { Windows, POSIX };
 
       // Default arguments and key/value delimiter
+      /// <summary>
+      /// Standard Windows paarameter delimiter.
+      /// </summary>
       private const string DELIMITER_ARGS_WIN = "/";
+      /// <summary>
+      /// Standard POSIX ("Linux") parameter delimiter.
+      /// </summary>
       private const string DELIMITER_ARGS_POSIX = "--";
+      /// <summary>
+      /// Default key=value delimiter.
+      /// </summary>
       private const string DELIMITER_VALUE = "=";
 
       Boolean mbolCaseSensitive;  // Treat parameter names as case-sensitive?
@@ -457,6 +466,9 @@ namespace libECKDUtilCS.Utils.Args
 
       #region "Constructor/Dispose"
 
+      /// <summary>
+      /// Initializes a new instance of the command line parser object.
+      /// </summary>
       public CmdArgs()
       {
          DelimiterArgs = GetDefaultDelimiterForOS();
@@ -464,8 +476,15 @@ namespace libECKDUtilCS.Utils.Args
          ValidParameters = new List<String>();
       }
 
+      /// <summary>
+      /// Initializes a new instance of the command line parser object.
+      /// </summary>
+      /// <param name="validParams">List of valid parameter names.</param>
       public CmdArgs(List<string> validParams = null)
       {
+
+         // ToDo: implement the validation of passed parameter names vs. this 
+         // list of valid names.
          DelimiterArgs = GetDefaultDelimiterForOS();
          DelimiterValue = DELIMITER_VALUE;
          if (validParams != null)
@@ -478,6 +497,9 @@ namespace libECKDUtilCS.Utils.Args
          }
       }
 
+      /// <summary>
+      /// Initializes a new instance of the command line parser object.
+      /// </summary>
       public CmdArgs(string delimiterArgs = DELIMITER_ARGS_WIN, string delimiterValue = DELIMITER_VALUE,
                      List<string> validParams  = null)
       {
@@ -645,10 +667,13 @@ namespace libECKDUtilCS.Utils.Args
       public Object Value
       {
          get { return moValue; }
-         set { moValue = value; }
+         set
+         {
+            moValue = value;
+         }
       }
 
-   #region "Methods - Public"
+      #region "Methods - Public"
 
       public override string ToString()
       {
