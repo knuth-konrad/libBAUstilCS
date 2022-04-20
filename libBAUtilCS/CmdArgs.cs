@@ -2,253 +2,281 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-using static libECKDUtilCS.StringUtil;
+using static libBAUtilCS.StringHelper;
 
-namespace libECKDUtilCS.Utils.Args
+namespace libBAUtilCS.Utils.Args
 {
 
-   /// <summary>
-   /// Commandline parameter handling
-   /// See https://docs.microsoft.com/en-us/archive/msdn-magazine/2019/march/net-parse-the-command-line-with-system-commandline
-   /// See https://github.com/commandlineparser/commandline
-   /// </summary>
-   public class CmdArgs
-   {
+  /// <summary>
+  /// Commandline parameter handling
+  /// See https://docs.microsoft.com/en-us/archive/msdn-magazine/2019/march/net-parse-the-command-line-with-system-commandline
+  /// See https://github.com/commandlineparser/commandline
+  /// </summary>
+  public class CmdArgs
+  {
 
-      #region "Declarations
+    #region Declarations
 
-      public enum eArgumentDelimiterStyle { Windows, POSIX };
-
-      // Default arguments and key/value delimiter
+    /// <summary>
+    /// OS-dependent default parameter delimiter.
+    /// </summary>
+    public enum eArgumentDelimiterStyle
+    {
       /// <summary>
-      /// Standard Windows paarameter delimiter.
+      /// Windows style parameter delimiter '/'
       /// </summary>
-      private const string DELIMITER_ARGS_WIN = "/";
+      Windows,
       /// <summary>
-      /// Standard POSIX ("Linux") parameter delimiter.
+      /// *nix style parameter delimiter '--'
       /// </summary>
-      private const string DELIMITER_ARGS_POSIX = "--";
-      /// <summary>
-      /// Default key=value delimiter.
-      /// </summary>
-      private const string DELIMITER_VALUE = "=";
+      POSIX
+    };
 
-      Boolean mbolCaseSensitive;  // Treat parameter names as case-sensitive?
+    // Default arguments and key/value delimiter
+    /// <summary>
+    /// Standard Windows parameter delimiter.
+    /// </summary>
+    private const string DELIMITER_ARGS_WIN = "/";
+    /// <summary>
+    /// Standard POSIX ("Linux") parameter delimiter.
+    /// </summary>
+    private const string DELIMITER_ARGS_POSIX = "--";
+    /// <summary>
+    /// Default key=value delimiter.
+    /// </summary>
+    private const string DELIMITER_VALUE = "=";
 
-      private string msDelimiterArgs = String.Empty;  // Arguments delimiter, typically "/"
-      private string msDelimiterValue = String.Empty; // Key/value delimiter, typically "="
-      private string msOriginalParameters = String.Empty;   // parameters as passed to the application
-      private List<string> listValidParameters;       // List of all valid parameter
+    private bool mbolCaseSensitive;  // Treat parameter names as case-sensitive?
 
-      private List<KeyValue> mcolKeyValues;
+    private string msDelimiterArgs = String.Empty;        // Arguments delimiter, typically "/"
+    private string msDelimiterValue = String.Empty;       // Key/value delimiter, typically "="
+    private string msOriginalParameters = String.Empty;   // Parameters as passed to the application
 
-      #endregion
+    private List<KeyValue> mcolKeyValues;
 
-      #region "Properties - Public"
-      
-      public Int32 ParametersCount
+    #endregion
+
+  #region Properties - Public
+
+  /// <summary>
+  /// Return the number of parameters (key/value)
+  /// </summary>
+  public Int32 ParametersCount
+  {
+    get
+    {
+      if (KeyValues != null)
       {
-         get
-         {
-            if (KeyValues != null)
-            {
-               return KeyValues.Count;
-            }
-            else
-            {
-               return 0;
-            }
-         }
+        return KeyValues.Count;
       }
-
-      public Boolean CaseSensitive
+      else
       {
-         get { return mbolCaseSensitive; }
-         set { mbolCaseSensitive = value; }
+        return 0;
       }
+    }
+  }
 
-      public string DelimiterArgs
+  /// <summary>
+  /// Treat parameter names as case-sensitive?
+  /// </summary>
+  public bool CaseSensitive
+  {
+    get { return mbolCaseSensitive; }
+    set { mbolCaseSensitive = value; }
+  }
+
+  /// <summary>
+  /// Parameter delimiter, e.g. '--' in '--param=value'
+  /// </summary>
+  public string DelimiterArgs
+  {
+    get { return msDelimiterArgs; }
+    set { msDelimiterArgs = value; }
+  }
+
+  /// <summary>
+  /// Name/value delimiter, e.g. '=' in  '--param=value'
+  /// </summary>
+  public string DelimiterValue
+  {
+    get { return msDelimiterValue; }
+    set { msDelimiterValue = value; }
+  }
+
+  /// <summary>
+  /// Unmodified parameter string as passed to the application
+  /// </summary>
+  public string OriginalParameters
+  {
+    get { return msOriginalParameters; }
+    set { msOriginalParameters = value; }
+  }
+
+  /// <summary>
+  /// The parsed command line parameters
+  /// </summary>
+  public List<KeyValue> KeyValues
+  {
+    get { return mcolKeyValues; }
+    set { mcolKeyValues = value; }
+  }
+
+  #endregion
+
+    #region Methods - Private
+
+    /// <summary>
+    /// Retrieve the parameter delimiter according to the OS' typical flavor
+    /// </summary>
+    /// <returns>OS typical parameter delimiter</returns>
+    private string GetDefaultDelimiterForOS()
+    {
+      if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Windows))
       {
-         get { return msDelimiterArgs; }
-         set { msDelimiterArgs = value; }
+        return DELIMITER_ARGS_WIN;
       }
-
-      public string OriginalParameters
+      else
       {
-         get { return msOriginalParameters; }
-         set { msOriginalParameters = value; }
+        return DELIMITER_ARGS_POSIX;
       }
+    }
 
-      public string DelimiterValue
+    /// <summary>
+    /// Is a parameter present more than once?
+    /// </summary>
+    private bool HasDuplicate(KeyValue currentKey, Int32 currentIndex)
+    {
+
+      // Safe guard
+      if (KeyValues.Count < 1) { return false; }
+
+      // Compare the passed parameter to the list and see if there's a duplicate entry
+      for (Int32 i = 0;  i<= KeyValues.Count - 1; i++)
       {
-         get { return msDelimiterValue; }
-         set { msDelimiterValue = value; }
-      }
+        KeyValue o = KeyValues[i];
 
-      public List<string> ValidParameters
-      {
-         get { return listValidParameters; }
-         set { listValidParameters = value; }
-      }
-
-      public List<KeyValue> KeyValues
-      {
-         get { return mcolKeyValues; }
-         set { mcolKeyValues = value; }
-      }
-
-      #endregion
-
-      #region "Methods - Private"
-      
-      /// <summary>
-      /// Is a parameter present more than once?
-      /// </summary>
-      private Boolean HasDuplicate(KeyValue currentKey, Int32 currentIndex)
-      {
-
-         // Safe guard
-         if (KeyValues.Count < 1) { return false; }
-
-         // Compare the passed parameter to the list and see if there's a duplicate entry
-         for (Int32 i = 0;  i<= KeyValues.Count - 1; i++)
-         {
-            KeyValue o = KeyValues[i];
-
-            if (CaseSensitive == false)
-            {
-               if ((o.Key.ToLower() == currentKey.Key.ToLower()) && (i != currentIndex))
-               {
-                  return true;
-               }
-            }
-            else
-            {
-               if ((o.Key == currentKey.Key) && (i != currentIndex))
-               {
-                  return true;
-               }
-            }
-
-         }  // for (Int32 i = 0;  i<= KeyValues.Count - 1; i++)
-
-            // Reaching here, we've found no duplicates
-            return false;
-      }
-
-      private Boolean ParseCmd(string[] asArgs, Int32 startIndex = 0)
-      {
-
-         string sKey = String.Empty;
-         string sValue = String.Empty;
-         Boolean bolResult = true;
-
-         for (Int32 i = startIndex; i<=  asArgs.Length - 1; i++)
-         {
-            bolResult = bolResult && ParseParam(asArgs[i]);
-         }
-
-         return bolResult;
-
-      }
-
-      private Boolean ParseCmd(string sArgs)
-      {
-         string[] asArgs = sArgs.Split(Convert.ToChar(DelimiterArgs));
-         return ParseCmd(asArgs);
-      }
-
-      /// <summary>
-      /// Parses a single key/pair combo into a matching <see cref="KeyValue"/> object
-      /// </summary>
-      /// <param name="sParam"></param>
-      /// <returns></returns>
-      private Boolean ParseParam(string sParam)
-      {
-
-
-         if (sParam.Length < 1)
-         {
+        if (CaseSensitive == false)
+        {
+          if ((o.Key.ToLower() == currentKey.Key.ToLower()) && (i != currentIndex))
+          {
             return true;
-         }
+          }
+        }
+        else
+        {
+          if ((o.Key == currentKey.Key) && (i != currentIndex))
+          {
+            return true;
+          }
+        }
 
-         if (sParam.Contains(DelimiterValue))
-         {
+      }  // for (Int32 i = 0;  i<= KeyValues.Count - 1; i++)
 
-            // Parameter of the form /key=value
+      // Reaching here, we've found no duplicates
+      return false;
+    }
 
-            KeyValue o = new KeyValue(sParam);
+    private bool ParseCmd(string[] asArgs, Int32 startIndex = 0)
+    {
 
-            // '/file' for /file=MyFile.txt
-            o.KeyLong = Left(sParam, sParam.IndexOf(DelimiterValue)).Trim();
-            // Remove the leading delimiter, results in 'file'
-            if (o.KeyLong.IndexOf(DelimiterArgs) > -1)
-            {
-               o.KeyLong = Mid(o.KeyLong, DelimiterArgs.Length);
-            }
-            // Since we parse this from the command line, set both
-            o.KeyShort = o.KeyLong;
-            o.Value = Mid(sParam, sParam.IndexOf(DelimiterValue) + 1);
+      string sKey = String.Empty;
+      string sValue = String.Empty;
+      bool bolResult = true;
 
-            KeyValues.Add(o);
-         }
-         else
-         {
-
-            // Parameter of the form /Value.
-            // These are considered to be boolean parameters. If present, their value is 'true'
-
-            KeyValue o = new KeyValue(sParam);
-
-            o.KeyLong = sParam.Trim();
-            if (o.KeyLong.IndexOf(DelimiterArgs) > -1)
-            {
-               // o.KeyLong = Mid(o.KeyLong, DelimiterArgs.Length + 1);
-               o.KeyLong = Mid(o.KeyLong, DelimiterArgs.Length);
-            }
-            // Since we parse this from the command line, set both
-            o.KeyShort = o.KeyLong;
-            o.Value = true;
-
-            KeyValues.Add(o);
-         }
-         return true;
-      }  // ParseParam
-
-
-      /// <summary>
-      /// Retrieve the parameter delimiter according to the OS' typical flavor
-      /// </summary>
-      /// <returns>OS typical parameter delimiter</returns>
-      private string GetDefaultDelimiterForOS()
+      for (Int32 i = startIndex; i<=  asArgs.Length - 1; i++)
       {
-         if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Windows))
-         {
-            return DELIMITER_ARGS_WIN;
-         }
-         else
-         {
-            return DELIMITER_ARGS_POSIX;
-         }
+        bolResult = bolResult && ParseParam(asArgs[i]);
       }
 
-      #endregion
+      return bolResult;
 
-      #region "Methods - Public"
+    }
 
-      /// <summary>
-      /// Initializes the object by parsing System.Environment.GetCommandLineArgs()
-      /// </summary>
-      /// <returns></returns>
-      public Boolean Initialize(string cmdLineArgs = "")
+    private bool ParseCmd(string sArgs)
+    {
+      string[] asArgs = sArgs.Split(Convert.ToChar(DelimiterArgs));
+      return ParseCmd(asArgs);
+    }
+
+    /// <summary>
+    /// Parses a single key/pair combo into a matching <see cref="KeyValue"/> object
+    /// </summary>
+    /// <param name="sParam"></param>
+    /// <returns></returns>
+    private bool ParseParam(string sParam)
+    {
+
+
+      if (sParam.Length < 1)
+      {
+        return true;
+      }
+
+      if (sParam.Contains(DelimiterValue))
       {
 
+        // Parameter of the form /key=value
+
+        KeyValue o = new KeyValue(sParam);
+
+        // '/file' for /file=MyFile.txt
+        o.KeyLong = Left(sParam, sParam.IndexOf(DelimiterValue)).Trim();
+        // Remove the leading delimiter, results in 'file'
+        if (o.KeyLong.IndexOf(DelimiterArgs) > -1)
+        {
+          o.KeyLong = Mid(o.KeyLong, DelimiterArgs.Length);
+        }
+        // Since we parse this from the command line, set both
+        o.KeyShort = o.KeyLong;
+        o.Value = Mid(sParam, sParam.IndexOf(DelimiterValue) + 1);
+
+        KeyValues.Add(o);
+      }
+      else
+      {
+
+        // Parameter of the form /Value.
+        // These are considered to be boolean parameters. If present, their value is 'true'
+
+        KeyValue o = new KeyValue(sParam);
+
+        o.KeyLong = sParam.Trim();
+        if (o.KeyLong.IndexOf(DelimiterArgs) > -1)
+        {
+          // o.KeyLong = Mid(o.KeyLong, DelimiterArgs.Length + 1);
+          o.KeyLong = Mid(o.KeyLong, DelimiterArgs.Length);
+        }
+        // Since we parse this from the command line, set both
+        o.KeyShort = o.KeyLong;
+        o.Value = true;
+
+        KeyValues.Add(o);
+      }
+      return true;
+    }  // ParseParam
+
+  #endregion
+
+    #region Methods - Public
+
+    /// <summary>
+    /// Initializes the object by parsing System.Environment.GetCommandLineArgs()
+    /// </summary>
+    /// <param name="cmdLineArgs">Command line parameter string, e.g. /abc=123 /def</param>
+    /// <returns><see langword="true"/>/<see langword="false"/></returns>
+    public bool Initialize(string cmdLineArgs = "")
+      {
          // Clear everything, as we're parsing anew.
          KeyValues = new List<KeyValue>();
 
          if (cmdLineArgs.Length < 1)
          {
             string[] asArgs = System.Environment.GetCommandLineArgs();
+            if (asArgs.Length < 2)
+            {
+               // No command line arguments passed
+               return false;
+            }
             // When using System.Environment.GetCommandLineArgs(), the 1st array element is the executable's name
             OriginalParameters = asArgs[1];
             return ParseCmd(asArgs, 1);
@@ -260,105 +288,126 @@ namespace libECKDUtilCS.Utils.Args
          }
       }  // Initialize
 
-      /// <summary>
-      /// Validates all passed parameters
-      /// </summary>
-      public void Validate()
+    /// <summary>
+    /// Validates all passed parameters
+    /// </summary>
+    public void Validate()
+    {
+      // Safe guard
+      if (KeyValues.Count < 1)
       {
-         // Safe guard
-         if (KeyValues.Count < 1)
-         {
-            return;
-         }
+        return;
+      }
 
-         // Any duplicates?
-         for (Int32 i = 0; i <= KeyValues.Count - 1; i++)
-         {
-            KeyValue o = KeyValues[i];
-            if (HasDuplicate(o, i) == true)
-            {
-               throw new ArgumentException(String.Format("Duplicate parameter: {0}", o.Key));
-            }
-         }
+      // Any duplicates?
+      for (Int32 i = 0; i <= KeyValues.Count - 1; i++)
+      {
+        KeyValue o = KeyValues[i];
+        if (HasDuplicate(o, i) == true)
+        {
+          throw new ArgumentException(String.Format("Duplicate parameter: {0}", o.Key));
+        }
+      }
+    }  // Validate
 
-      }  // Validate
+    /// <summary>
+    /// Determine if any of these parameters are present
+    /// </summary>
+    /// <param name="paramList">List of parameter names (<see cref="KeyValue.Key"/>)</param>
+    /// <returns>
+    /// <see langword="true"/> if at least one of the parameters passed is present, otherwise <see langword="false"/>
+    /// </returns>
+    public bool HasAnyParameter(List<String> paramList)
+   {
+      foreach(String s in paramList)
+      {
+        if (HasParameter(s))
+        {
+          return true;
+        }
+      }
+
+      // Reaching here, no parameter has been found
+      return false;
+
+   }
+
+    /// <summary>
+    /// Determine if a certain parameter is present
+    /// </summary>
+    /// <param name="key">Parameter's name(<see cref = "KeyValue.Key" />)</param>
+    /// <returns><see langword="true"/>/<see langword="false"/></returns>
+    public bool HasParameter(string key)
+    {
+        foreach (KeyValue o in KeyValues)
+        {
+
+          if (CaseSensitive == true)
+          {
+            if (o.Key == key) { return true; }
+          }
+          else
+          {
+            if (o.Key.ToLower() == key.ToLower()) { return true; }
+          }
+        }
+
+        return false;
+    }  // HasParameter
+
+    /// <summary>
+    /// Determine if a certain parameter is present referring to it either
+    /// by its long or short form.
+    /// </summary>
+    /// <param name="keyShort">Parameter's name(<see cref = "KeyValueBase.KeyShort" />)</param>
+    /// <param name="keyLong">Parameter's name(<see cref = "KeyValueBase.KeyLong" />)</param>
+    /// <returns><see langword="true"/>/<see langword="false"/></returns>
+    public bool HasParameter(string keyShort, string keyLong)
+    {
+        foreach (KeyValue o in KeyValues)
+        {
+
+          if (CaseSensitive == true)
+          {
+            if (o.Key == keyShort || o.Key == keyLong) { return true; }
+          }
+          else
+          {
+            if (o.Key.ToLower() == keyShort.ToLower() || o.Key.ToLower() == keyLong.ToLower()) { return true; }
+          }
+        }
+
+        return false;
+    }  // HasParameter
 
       /// <summary>
       /// Determine if a certain parameter is present
       /// </summary>
-      /// <param name="key">Parameter's name(<see cref = "KeyValue.Key" />)</param>
-      /// <returns></returns>
-      public Boolean HasParameter(string key)
-      {
-         foreach (KeyValue o in KeyValues)
-         {
-
-            if (CaseSensitive == true)
-            {
-               if (o.Key == key) { return true; }
-            }
-            else
-            {
-               if (o.Key.ToLower() == key.ToLower()) { return true; }
-            }
-         }
-
-         return false;
-      }  // HasParameter
-
-      /// <summary>
-      /// Determine if a certain parameter is present referring to it either
-      /// by its long or short form.
-      /// </summary>
-      /// <param name="keyShort">Parameter's name(<see cref = "KeyValue.KeyShort" />)</param>
-      /// <param name="keyLong">Parameter's name(<see cref = "KeyValue.KeyLong" />)</param>
-      /// <returns></returns>
-      public Boolean HasParameter(string keyShort, string keyLong)
-      {
-         foreach (KeyValue o in KeyValues)
-         {
-
-            if (CaseSensitive == true)
-            {
-               if (o.Key == keyShort || o.Key == keyLong) { return true; }
-            }
-            else
-            {
-               if (o.Key.ToLower() == keyShort.ToLower() || o.Key.ToLower() == keyLong.ToLower()) { return true; }
-            }
-         }
-
-         return false;
-      }  // HasParameter
-
-      /// <summary>
-      /// Determine if a certain parameter is present
-      /// </summary>
-      /// <param name="paramlist">List of parameter names (<see cref="KeyValue.Key"/>)</param>
+      /// <param name="paramList>">List of parameter names (<see cref="KeyValue.Key"/>)</param>
       /// <returns>
       /// <see langword="true"/> if all parameters passed are present, otherwise <see langword="false"/>
       /// </returns>
-      public Boolean HasParameter(List<string> paramList)
+      public bool HasParameter(List<string> paramList)
       {
-         foreach (string s in paramList)
-            {
-               if (HasParameter(s) == false) { return false; }
-            }
-            // Reaching here, all parameters have been found
-         return true;
+        foreach (string s in paramList)
+        {
+          if (HasParameter(s) == false) { return false; }
+        }
+        // Reaching here, all parameters have been found
+        return true;
       }  // HasParameter
 
       /// <summary>
       /// Return the corresponding KeyValue object
       /// </summary>
-      /// <param name="key">The parameter's name(<see cref = "KeyValue.Key" /></ param >
+      /// <param name="key">The parameter's name(<see cref = "KeyValue.Key" /></param >
       /// <param name="caseSensitive">Treat the name as case-sensitive?</param>
       /// <returns><see cref="KeyValue"/> whose <see cref="KeyValue.Key"/> equals <paramref name="key"/>.</returns>
-      public KeyValue GetParameterByName(string key, Boolean caseSensitive = false)
+      public KeyValue GetParameterByName(string key, bool caseSensitive = false)
       {
 
          // Safe guard
-         if (HasParameter(key) == false) { throw new ArgumentException("Parameter doesn't exist: " + key); }
+         if (HasParameter(key) == false) { throw new ArgumentException("Parameter doesn't exist: " + key, key); }
 
          foreach (KeyValue o in KeyValues)
          {
@@ -380,11 +429,11 @@ namespace libECKDUtilCS.Utils.Args
       /// <summary>
       /// Return the corresponding KeyValue object
       /// </summary>
-      /// <param name="keyShort">Parameter's name(<see cref = "KeyValue.KeyShort" />)</param>
-      /// <param name="keyLong">Parameter's name(<see cref = "KeyValue.KeyLong" />)</param>
+      /// <param name="keyShort">Parameter's name(<see cref = "KeyValueBase.KeyShort" />)</param>
+      /// <param name="keyLong">Parameter's name(<see cref = "KeyValueBase.KeyLong" />)</param>
       /// <param name="caseSensitive">Treat the name as case-sensitive?</param>
-      /// <returns><see cref="KeyValue"/> whose <see cref="KeyValue.Key"/> equals <paramref name="key"/>.</returns>
-      public KeyValue GetParameterByName(string keyShort, string keyLong, Boolean caseSensitive = false)
+      /// <returns><see cref="KeyValue"/> whose <see cref="KeyValue.Key"/> equals <paramref name="keyShort"/> or <paramref name="keyLong"/>.</returns>
+      public KeyValue GetParameterByName(string keyShort, string keyLong, bool caseSensitive = false)
       {
 
          // Safe guard
@@ -410,10 +459,10 @@ namespace libECKDUtilCS.Utils.Args
       /// <summary>
       /// Return the value of a parameter
       /// </summary>
-      /// <param name="key">The parameter's name(<see cref = "KeyValue.Key" /></ param >
+      /// <param name="key">The parameter's name(<see cref = "KeyValue.Key" /></param >
       /// <param name="caseSensitive">Treat the name as case-sensitive?</param>
-      /// <returns></returns>
-      public Object GetValueByName(string key, Boolean caseSensitive = false)
+      /// <returns>Value of parameter or <see langword="null"/> if parameter doesn't exist</returns>
+      public Object GetValueByName(string key, bool caseSensitive = false)
       {
 
          // Safe guard
@@ -423,7 +472,7 @@ namespace libECKDUtilCS.Utils.Args
          {
             if (caseSensitive == false)
             {
-               if (o.Key.ToLower() == key) { return o.Value; }
+               if (o.Key.ToLower() == key.ToLower()) { return o.Value; }
             }
             else
             {
@@ -434,14 +483,14 @@ namespace libECKDUtilCS.Utils.Args
          return null;
       }  // GetValueByName
 
-      /// <summary>
-      /// Return the value of a parameter
-      /// </summary>
-      /// <param name="keyShort">Parameter's name(<see cref = "KeyValue.KeyShort" />)</param>
-      /// <param name="keyLong">Parameter's name(<see cref = "KeyValue.KeyLong" />)</param>
-      /// <param name="caseSensitive">Treat the name as case-sensitive?</param>
-      /// <returns></returns>
-      public Object GetValueByName(string keyShort, string keyLong, Boolean caseSensitive = false)
+    /// <summary>
+    /// Return the value of a parameter
+    /// </summary>
+    /// <param name="keyShort">Parameter's name(<see cref = "KeyValueBase.KeyShort" />)</param>
+    /// <param name="keyLong">Parameter's name(<see cref = "KeyValueBase.KeyLong" />)</param>
+    /// <param name="caseSensitive">Treat the name as case-sensitive?</param>
+    /// <returns>Value of parameter or <see langword="null"/> if parameter doesn't exist</returns>
+    public Object GetValueByName(string keyShort, string keyLong, bool caseSensitive = false)
       {
 
          // Safe guard
@@ -462,46 +511,25 @@ namespace libECKDUtilCS.Utils.Args
          return null;
       }  // GetValueByName
 
-      #endregion
+    #endregion
 
-      #region "Constructor/Dispose"
+    #region "Constructor/Dispose"
 
-      /// <summary>
-      /// Initializes a new instance of the command line parser object.
-      /// </summary>
-      public CmdArgs()
+    /// <summary>
+    /// Initializes a new instance of the command line parser object.
+    /// </summary>
+    public CmdArgs()
       {
          DelimiterArgs = GetDefaultDelimiterForOS();
          DelimiterValue = DELIMITER_VALUE;
-         ValidParameters = new List<String>();
       }
 
       /// <summary>
       /// Initializes a new instance of the command line parser object.
       /// </summary>
-      /// <param name="validParams">List of valid parameter names.</param>
-      public CmdArgs(List<string> validParams = null)
-      {
-
-         // ToDo: implement the validation of passed parameter names vs. this 
-         // list of valid names.
-         DelimiterArgs = GetDefaultDelimiterForOS();
-         DelimiterValue = DELIMITER_VALUE;
-         if (validParams != null)
-         {
-            ValidParameters = validParams;
-         }
-         else
-         {
-            ValidParameters = new List<string>();
-         }
-      }
-
-      /// <summary>
-      /// Initializes a new instance of the command line parser object.
-      /// </summary>
-      public CmdArgs(string delimiterArgs = DELIMITER_ARGS_WIN, string delimiterValue = DELIMITER_VALUE,
-                     List<string> validParams  = null)
+      /// <param name="delimiterArgs">Argument delimiter. Defaults to Windows-style '/'.</param>
+      /// <param name="delimiterValue">Key/value delimiter. Defaults to '='.</param>
+      public CmdArgs(string delimiterArgs = DELIMITER_ARGS_WIN, string delimiterValue = DELIMITER_VALUE)
       {
          // Safe guard
          if (delimiterArgs.Length < 1 || delimiterValue.Length< 1) { throw new ArgumentOutOfRangeException("Empty argument or key/value delimiter are not allowed."); }
@@ -509,19 +537,15 @@ namespace libECKDUtilCS.Utils.Args
          DelimiterArgs = delimiterArgs;
          DelimiterValue = delimiterValue;
          KeyValues = new List<KeyValue>();
-         if (validParams != null)
-         {
-            ValidParameters = validParams;
-         }
-         else
-         {
-            ValidParameters = new List<string>(); ;
-         }
       }
 
-      public CmdArgs(eArgumentDelimiterStyle delimiterArgsType = eArgumentDelimiterStyle.Windows,
-                     string delimiterValue = DELIMITER_VALUE,
-                     List<string> validParams = null)
+    /// <summary>
+    /// Initializes a new instance of the command line parser object.
+    /// </summary>
+    /// <param name="delimiterArgsType">Argument delimiter. Defaults to Windows-style '/'.</param>
+    /// <param name="delimiterValue">Key/value delimiter. Defaults to '='.</param>
+    public CmdArgs(eArgumentDelimiterStyle delimiterArgsType = eArgumentDelimiterStyle.Windows,
+                     string delimiterValue = DELIMITER_VALUE)
       {
 
          // Safe guard
@@ -537,17 +561,15 @@ namespace libECKDUtilCS.Utils.Args
          }
          DelimiterValue = delimiterValue;
          KeyValues = new List<KeyValue>();
-         if (validParams != null)
-         {
-            ValidParameters = validParams;
-         }
-         else
-         {
-            ValidParameters = new List<string>();
-         }
       }
 
-      public CmdArgs(List<KeyValue> keyValueList, string delimiterArgs = DELIMITER_ARGS_WIN,
+    /// <summary>
+    /// Initializes a new instance of the command line parser object.
+    /// </summary>
+    /// <param name="keyValueList">Command line argument list of <see cref="KeyValue"/></param>
+    /// <param name="delimiterArgs">Argument delimiter. Defaults to Windows-style '/'.</param>
+    /// <param name="delimiterValue">Key/value delimiter. Defaults to '='.</param>
+    public CmdArgs(List<KeyValue> keyValueList, string delimiterArgs = DELIMITER_ARGS_WIN,
                      string delimiterValue  = DELIMITER_VALUE)
       {
 
@@ -557,16 +579,15 @@ namespace libECKDUtilCS.Utils.Args
          DelimiterArgs = delimiterArgs;
          DelimiterValue = delimiterValue;
          KeyValues = keyValueList;
-         // Create the list of valid parameter names from the passed collection
-         ValidParameters = new List<string>();
-         foreach (KeyValue o in KeyValues)
-         {
-            ValidParameters.Add(o.Key);
-         }
       }
 
-
-      public CmdArgs(List<KeyValue> keyValueList, eArgumentDelimiterStyle delimiterArgsType  = eArgumentDelimiterStyle.Windows,
+    /// <summary>
+    /// Initializes a new instance of the command line parser object.
+    /// </summary>
+    /// <param name="keyValueList">Command line argument list of <see cref="KeyValue"/></param>
+    /// <param name="delimiterArgsType">Argument delimiter. Defaults to Windows-style '/'.</param>
+    /// <param name="delimiterValue">Key/value delimiter. Defaults to '='.</param>
+    public CmdArgs(List<KeyValue> keyValueList, eArgumentDelimiterStyle delimiterArgsType  = eArgumentDelimiterStyle.Windows,
                   string delimiterValue = DELIMITER_VALUE)
       {
 
@@ -583,12 +604,6 @@ namespace libECKDUtilCS.Utils.Args
          }
          DelimiterValue = delimiterValue;
          KeyValues = keyValueList;
-         // Create the list of valid parameter names from the passed collection
-         ValidParameters = new List<string>();
-         foreach (KeyValue o in KeyValues)
-         {
-            ValidParameters.Add(o.Key);
-         }
       }
 
 
@@ -596,25 +611,124 @@ namespace libECKDUtilCS.Utils.Args
 
    }  // CmdArgs
 
-   public class KeyValue
+   /// <summary>
+   /// A single command line parameter + its value, i.e. /parameter=value
+   /// </summary>
+   public class KeyValue : KeyValueBase
    {
 
-      private string msHelpText = "";
-      private string msKeyLong = "";
-      private string msKeyShort = "";
-      private string msOriginalParameter = "";
+      private string msHelpText = String.Empty;
+      private string msOriginalParameter = String.Empty;
 
       private Object moValue;
 
-      /// <summary>
-      /// Help text for this parameter
-      /// </summary>
-      public string HelpText
+    #region Properties - Public
+
+    /// <summary>
+    /// Help text for this parameter
+    /// </summary>
+    public string HelpText
       {
          get { return msHelpText; }
          set { msHelpText = value; }
       }
- 
+
+      /// <summary>
+      /// Parameter name, e.g. 'file' or 'f' from /file=MyFile.txt  or /f=MyFile.txt
+      /// </summary>
+      public string Key
+      {
+         get
+         { // KeyLong takes precedence
+            if (this.KeyLong.Length > 0)
+            {
+               return KeyLong;
+            }
+            else
+            {
+               return KeyShort;
+            }
+         }
+      }
+
+      /// <summary>
+      /// The full original parameter, e.g. /file=MyFile.txt
+      /// </summary>
+     public string OriginalParameter
+      {
+         get { return msOriginalParameter; }
+         set { msOriginalParameter = value; }
+      }
+
+      /// <summary>
+      /// Parameter value, e.g. 'MyFile.txt' from /file=MyFile.txt
+      /// </summary>
+      public Object Value
+      {
+         get { return moValue; }
+         set
+         {
+            moValue = value;
+         }
+      }
+
+    #endregion
+
+    #region Methods - Public
+
+    /// <summary>
+    /// Overwrites .ToString()
+    /// </summary>
+    public override string ToString()
+      {
+         string sText = this.Key;
+         if (this.HelpText.Length<1)
+         {
+            return sText;
+         }
+         else
+         {
+            return sText + ": " + this.HelpText;
+         }
+      }
+
+      #endregion
+
+      /// <summary>
+      /// Initializes a new instance of the command line parameter key/value pair object.
+      /// </summary>
+      /// <param name="originalParam">Key/value pair as originally passed via command line, i.e. /file=MyFile.txt</param>
+      /// <param name="keyShort">Short notation of parameter name, i.e. '/f'</param>
+      /// <param name="keyLong">Long notation of parameter name, i.e. /file</param>
+      /// <param name="value">The actual value passed.</param>
+      /// <param name="helpText">Short textual description of this parameter.</param>
+      public KeyValue(string originalParam, string keyShort = "",
+                        string keyLong = "", Object value = null,
+                        string helpText = "")
+      {
+
+         HelpText = helpText;
+         KeyLong = keyLong;
+         KeyShort = keyShort;
+         OriginalParameter = originalParam;
+         Value = value;
+      }
+
+   } // KeyValue
+
+   /// <summary>
+   /// Base/parent KeyValue class
+   /// </summary>
+   public class KeyValueBase
+   {
+      private string msKeyLong = String.Empty;
+      private string msKeyShort = String.Empty;
+
+      /// <summary>
+      /// This parameter is mandatory
+      /// </summary>
+      public bool IsMandatory { get; set; }
+      
       /// <summary>
       /// 'Outspoken' parameter name, e.g. /file
       /// </summary>
@@ -634,75 +748,21 @@ namespace libECKDUtilCS.Utils.Args
       }
 
       /// <summary>
-      /// Parameter name, e.g. 'file' or 'f' from /file=MyFile.txt  or /f=MyFile.txt
+      /// Short and long parameter name
       /// </summary>
-      public string Key
-      {
-         get
-         { // KeyLong tales precedence
-            if (this.KeyLong.Length > 0)
-            {
-               return KeyLong;
-            }
-            else
-            {
-               return KeyShort;
-            }
-         }
+      public KeyValueBase(string shortKey = "", string longKey = "") {
+         KeyLong = longKey;
+         KeyShort = shortKey;
       }
 
       /// <summary>
-      /// The full original parameter, e.g. /file=MyFile.txt
+      /// Short and long parameter name
       /// </summary>
-      /// <returns></returns>
-     public string OriginalParameter
+      public KeyValueBase(KeyValueBase o)
       {
-         get { return msOriginalParameter; }
-         set { msOriginalParameter = value; }
+         KeyLong = o.KeyLong;
+         KeyShort = o.KeyShort;
       }
 
-      /// <summary>
-      /// Parameter value, e.g. 'MyFile.txt' from /file=MyFile.txt
-      /// </summary>
-      public Object Value
-      {
-         get { return moValue; }
-         set
-         {
-            moValue = value;
-         }
-      }
-
-      #region "Methods - Public"
-
-      public override string ToString()
-      {
-         string sText = this.Key;
-         if (this.HelpText.Length<1)
-         {
-            return sText;
-         }
-         else
-         {
-            return sText + ": " + this.HelpText;
-         }
-      }
-
-         #endregion
-
-
-      public KeyValue(string originalParam, string keyShort = "",
-                        string keyLong = "", Object value = null,
-                        string helpText = "")
-      {
-
-         HelpText = helpText;
-         KeyLong = keyLong;
-         KeyShort = keyShort;
-         OriginalParameter = originalParam;
-         Value = value;
-      }
-
-
-      }
    }
+}

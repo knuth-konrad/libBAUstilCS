@@ -1,9 +1,6 @@
 using System;
-// using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
-// using System.Text;
-// using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Serialization;
 
@@ -12,7 +9,7 @@ namespace libBAUtilCS
    /// <summary>
    /// General object helpers
    /// </summary>
-   class ObjectUtil
+   class ObjectHelper
    {
 
       #region "Serialization"
@@ -20,7 +17,7 @@ namespace libBAUtilCS
       /// <summary>
       /// Returns the enumeration member's name for the specific enumeration value.
       /// </summary>
-      /// <param name="enumType">.NET type of enum as retrieved by <see cref="Type.GetType"/>.</param>
+      /// <param name="enumType">.NET type of enum as retrieved by <see cref="System.Type.GetType()"/>.</param>
       /// <param name="enumMemberValue">Return the member name for this value</param>
       /// <returns>
       /// The enumeration's member name matching <paramref name = "enumMemberValue" />
@@ -62,7 +59,7 @@ namespace libBAUtilCS
       /// <summary>
       /// Returns the enumeration member's name for the specific enumeration value.
       /// </summary>
-      /// <param name="enumType">.NET type of enum as retrieved by <see cref="Type.GetType"/>.</param>
+      /// <param name="enumType">.NET type of enum as retrieved by <see cref="System.Type.GetType()"/>.</param>
       /// <param name="enumMemberValue">Return the member name for this value.</param>
       /// <param name="alternativeNames">
       /// Array with alternative names to return.
@@ -127,7 +124,7 @@ namespace libBAUtilCS
       /// Determine if an object is serializable.
       /// </summary>
       /// <param name="obj">Check this object</param>
-      public static Boolean IsSerializable(Object obj)
+      public static bool IsSerializable(Object obj)
       {
          /*'------------------------------------------------------------------------------
          'Prereq.  : -
@@ -161,7 +158,7 @@ namespace libBAUtilCS
       /// (xmlnsxsi = "http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd = "http://www.w3.org/2001/XMLSchema")
       /// </param>
       /// <returns></returns>
-      public static string Serialize(object obj, Boolean omitXmlDeclaration = false, Boolean omitXmlNamespace = false)
+      public static string Serialize(object obj, bool omitXmlDeclaration = false, bool omitXmlNamespace = false)
       {
          /*
           * ------------------------------------------------------------------------------
@@ -290,5 +287,5 @@ namespace libBAUtilCS
          return Clone(o);
       }
 
-   }  // class ObjectUtil
+   }  // class ObjectHelper
 }

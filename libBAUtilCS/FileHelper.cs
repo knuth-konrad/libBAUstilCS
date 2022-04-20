@@ -1,7 +1,5 @@
 using System;
 using System.IO;
-// using System.Text;
-// using System.Threading.Tasks;
 
 namespace libBAUtilCS
 {
@@ -50,7 +48,7 @@ namespace libBAUtilCS
       /// <see langref="true"/>: append <paramref name="textLine"/> at the end of <paramref name="textFile"/><br />
       /// <see langref="false"/>: insert <paramref name="textLine"/> at the current position of <paramref name="textFile"/>
       /// </param>
-      public static void TxtWriteLine(string textFile, string textLine, Boolean doAppend = true)
+      public static void TxtWriteLine(string textFile, string textLine, bool doAppend = true)
       {
          using (var writer = new StreamWriter(textFile, doAppend))
          {

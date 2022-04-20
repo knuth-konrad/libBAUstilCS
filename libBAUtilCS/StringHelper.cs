@@ -9,27 +9,45 @@ namespace libBAUtilCS
 
    /// <summary>
    ///  General purpose string handling/formatting helpers
+   /// </summary>
    ///  <remarks>
    ///  VB.NET / C# equivalents: https://sites.harding.edu/fmccown/vbnet_csharp_comparison.html
    /// </remarks>
-   /// </summary>
-   public class StringUtil
+   public class StringHelper
    {
-      #region "Declares"
-      /// Bytes to <unit> - Function Bytes2FormattedString()
+      #region Declares
+      // Bytes to <unit> - Function Bytes2FormattedString()
 
       /// <summary>Data storage units</summary>
-      /// <seealso cref="Bytes2FormattedString"/>
+      /// <seealso cref="Bytes2FormattedString(ulong)"/>
+      /// <seealso cref="Bytes2FormattedString(ulong, bool)"/>
       public enum ESizeUnits : ulong
       {
-         B = 1024,
-         KB = B * B,
-         MB = KB * B,
-         GB = MB * B,
-         TB = GB * B
+          /// <summary>
+          /// Byte
+          /// </summary>
+          B = 1024,
+          /// <summary>
+          /// Kilobyte
+          /// </summary>
+          KB = B * B,
+          /// <summary>
+          /// Megabyte
+          /// </summary>
+          MB = KB * B,
+          /// <summary>
+          /// Gigabyte
+          /// </summary>
+          GB = MB * B,
+          /// <summary>
+          /// Terabyte
+          /// </summary>
+          TB = GB * B
 
       }
-      #endregion
+  #endregion
+
+      #region Bytes2FormattedString
 
       /// <summary>
       /// Creates a formatted string representing the size in its proper 'spelled out' unit
@@ -44,48 +62,50 @@ namespace libBAUtilCS
       /// Source: http://www.vbforums.com/showthread.php?634675-RESOLVED-Bytes-to-MB-etc
       /// </remarks>
       public static string Bytes2FormattedString(ulong uintBytes)
-      {
-         string sUnits = string.Empty, szAsStr = string.Empty;
-         float dblInUnits;
+        {
+           string sUnits = string.Empty, szAsStr = string.Empty;
+           float dblInUnits;
 
-         if (uintBytes < (ulong)ESizeUnits.B)
-         {
-            szAsStr = uintBytes.ToString("n0");
-            sUnits = "Bytes";
-         }
-         else if (uintBytes <= (ulong)ESizeUnits.KB)
-         {
-            dblInUnits = uintBytes / (ulong)ESizeUnits.B;
-            szAsStr = dblInUnits.ToString("n1");
-            sUnits = "KB";
-         }
-         else if (uintBytes <= (ulong)ESizeUnits.MB)
-         {
-            dblInUnits = uintBytes / (ulong)ESizeUnits.KB;
-            szAsStr = dblInUnits.ToString("n1");
-            sUnits = "MB";
-         }
-         else if (uintBytes <= (ulong)ESizeUnits.GB)
-         {
-            dblInUnits = uintBytes / (ulong)ESizeUnits.MB;
-            szAsStr = dblInUnits.ToString("n1");
-            sUnits = "GB";
-         }
-         else
-         {
-            dblInUnits = uintBytes / (ulong)ESizeUnits.GB;
-            szAsStr = dblInUnits.ToString("n1");
-            sUnits = "TB";
-         }
+           if (uintBytes < (ulong)ESizeUnits.B)
+           {
+              szAsStr = uintBytes.ToString("n0");
+              sUnits = "Bytes";
+           }
+           else if (uintBytes <= (ulong)ESizeUnits.KB)
+           {
+              dblInUnits = uintBytes / (ulong)ESizeUnits.B;
+              szAsStr = dblInUnits.ToString("n1");
+              sUnits = "KB";
+           }
+           else if (uintBytes <= (ulong)ESizeUnits.MB)
+           {
+              dblInUnits = uintBytes / (ulong)ESizeUnits.KB;
+              szAsStr = dblInUnits.ToString("n1");
+              sUnits = "MB";
+           }
+           else if (uintBytes <= (ulong)ESizeUnits.GB)
+           {
+              dblInUnits = uintBytes / (ulong)ESizeUnits.MB;
+              szAsStr = dblInUnits.ToString("n1");
+              sUnits = "GB";
+           }
+           else
+           {
+              dblInUnits = uintBytes / (ulong)ESizeUnits.GB;
+              szAsStr = dblInUnits.ToString("n1");
+              sUnits = "TB";
+           }
 
-         return System.String.Format("{0} {1}", szAsStr, sUnits);
-      }
+           return System.String.Format("{0} {1}", szAsStr, sUnits);
+        }
+
 
       /// <summary>
       /// Creates a formatted string representing the size in its proper 'spelled out' unit
       /// (Bytes, KB etc.)
       /// </summary>
       /// <param name="uintBytes">Number of bytes to transform</param>
+      /// <param name="largestUnitOnly">Return only the largest unit part, e.g. 1MB 20KB -> 1MB</param>
       /// <returns>
       /// Spelled out size, e.g. 1030 -> '1KB'
       /// </returns>
@@ -96,63 +116,67 @@ namespace libBAUtilCS
       public static string Bytes2FormattedString(ulong uintBytes, bool largestUnitOnly = true)
       {
 
-         ulong uintDivisor;
-         string sUnits = string.Empty, szAsStr = string.Empty;
+          ulong uintDivisor;
+          string sUnits = string.Empty, szAsStr = string.Empty;
 
-         if (largestUnitOnly)
-         {
+          if (largestUnitOnly)
+          {
             return Bytes2FormattedString(uintBytes);
-         }
+          }
 
-         while (uintBytes > 0)
-         {
+          while (uintBytes > 0)
+          {
             if (uintBytes / (ulong)System.Math.Pow(1024, 4) > 0)
             {
-               // TB
-               uintDivisor = uintBytes / (ulong)System.Math.Pow(1024, 4);
-               uintBytes = uintBytes - (uintDivisor * (ulong)System.Math.Pow(1024, 4));
-               sUnits = "TB ";
-               Debug.Print(System.String.Format("TB - uintDivisor: {0}, uintBytes: {1}", uintDivisor, uintBytes));   
+                // TB
+                uintDivisor = uintBytes / (ulong)System.Math.Pow(1024, 4);
+                uintBytes = uintBytes - (uintDivisor * (ulong)System.Math.Pow(1024, 4));
+                sUnits = "TB ";
+                Debug.Print(System.String.Format("TB - uintDivisor: {0}, uintBytes: {1}", uintDivisor, uintBytes));   
             }
             else if (uintBytes / (ulong)System.Math.Pow(1024, 3) > 0)
             {
-               // GB
-               uintDivisor = uintBytes / (ulong)System.Math.Pow(1024, 3);
-               uintBytes = uintBytes - (uintDivisor * (ulong)System.Math.Pow(1024, 3));
-               sUnits = "GB ";
-               Debug.Print(System.String.Format("GB - uintDivisor: {0}, uintBytes: {1}", uintDivisor, uintBytes));
+                // GB
+                uintDivisor = uintBytes / (ulong)System.Math.Pow(1024, 3);
+                uintBytes = uintBytes - (uintDivisor * (ulong)System.Math.Pow(1024, 3));
+                sUnits = "GB ";
+                Debug.Print(System.String.Format("GB - uintDivisor: {0}, uintBytes: {1}", uintDivisor, uintBytes));
             }
             else if (uintBytes / (ulong)System.Math.Pow(1024, 2) > 0)
             {
-               // MB
-               uintDivisor = uintBytes / (ulong)System.Math.Pow(1024, 2);
-               uintBytes = uintBytes - (uintDivisor * (ulong)System.Math.Pow(1024, 2));
-               sUnits = "MB ";
-               Debug.Print(System.String.Format("MB - uintDivisor: {0}, uintBytes: {1}", uintDivisor, uintBytes));
+                // MB
+                uintDivisor = uintBytes / (ulong)System.Math.Pow(1024, 2);
+                uintBytes = uintBytes - (uintDivisor * (ulong)System.Math.Pow(1024, 2));
+                sUnits = "MB ";
+                Debug.Print(System.String.Format("MB - uintDivisor: {0}, uintBytes: {1}", uintDivisor, uintBytes));
             }
             else if (uintBytes / (ulong)System.Math.Pow(1024, 1) > 0)
             {
-               // KB
-               uintDivisor = uintBytes / (ulong)System.Math.Pow(1024, 1);
-               uintBytes = uintBytes - (uintDivisor * (ulong)System.Math.Pow(1024, 1));
-               sUnits = "KB ";
-               Debug.Print(System.String.Format("KB - uintDivisor: {0}, uintBytes: {1}", uintDivisor, uintBytes));
+                // KB
+                uintDivisor = uintBytes / (ulong)System.Math.Pow(1024, 1);
+                uintBytes = uintBytes - (uintDivisor * (ulong)System.Math.Pow(1024, 1));
+                sUnits = "KB ";
+                Debug.Print(System.String.Format("KB - uintDivisor: {0}, uintBytes: {1}", uintDivisor, uintBytes));
             }
             else
             {
-               // B
-               uintDivisor = uintBytes / (ulong)System.Math.Pow(1024, 0);
-               uintBytes = uintBytes - (uintDivisor * (ulong)System.Math.Pow(1024, 0));
-               sUnits = "B ";
-               Debug.Print(System.String.Format(" B - uintDivisor: {0}, uintBytes: {1}", uintDivisor, uintBytes));
+                // B
+                uintDivisor = uintBytes / (ulong)System.Math.Pow(1024, 0);
+                uintBytes = uintBytes - (uintDivisor * (ulong)System.Math.Pow(1024, 0));
+                sUnits = "B ";
+                Debug.Print(System.String.Format(" B - uintDivisor: {0}, uintBytes: {1}", uintDivisor, uintBytes));
             }
 
             szAsStr = szAsStr + uintDivisor.ToString("n0") + sUnits;
 
-         }  // while
+          }  // while
 
-         return szAsStr.TrimEnd();
+          return szAsStr.TrimEnd();
       }
+
+      #endregion
+
+      #region Chr
 
       /// <summary>
       /// Replacement for VB6's Chr() function.
@@ -165,35 +189,37 @@ namespace libBAUtilCS
       /// Source: https://stackoverflow.com/questions/36976240/c-sharp-char-from-int-used-as-string-the-real-equivalent-of-vb-chr?lq=1
       /// </remarks>
       public static string Chr(Int32 ansiValue)
-      {
-         return Char.ConvertFromUtf32(ansiValue);
-      }
+        {
+           return Char.ConvertFromUtf32(ansiValue);
+        }
 
-      /// <summary>
-      /// Replacement for VB6's Chr() function.
-      /// </summary>
-      /// <param name="ansiValue">ANSI value for which to return a string</param>
-      /// <returns>
-      /// ANSI String-Representation of <paramref name="ansiValue"/>
-      /// </returns>
-      public static string Chr(UInt32 ansiValue)
-      {
-         // Return Char.ConvertFromUtf32(CType(ansiValue, Int32))
-         return Convert.ToChar(ansiValue).ToString();
-      }
+        /// <summary>
+        /// Replacement for VB6's Chr() function.
+        /// </summary>
+        /// <param name="ansiValue">ANSI value for which to return a string</param>
+        /// <returns>
+        /// ANSI String-Representation of <paramref name="ansiValue"/>
+        /// </returns>
+        public static string Chr(UInt32 ansiValue)
+        {
+           // Return Char.ConvertFromUtf32(CType(ansiValue, Int32))
+           return Convert.ToChar(ansiValue).ToString();
+        }
 
-      /// <summary>
-      /// Capitalize the first letter of a string.
-      /// </summary>
-      /// <param name="sText">Source string</param>
-      /// <param name="sCulture">Specific culture string e.g. "en-US"</param>
-      /// <returns>
-      /// <paramref name="sText"/> with the first letter capitalized.
-      /// </returns>
-      /// <remarks>
-      /// Source: https://social.msdn.microsoft.com/Forums/vstudio/en-US/c0872f6d-2975-43e6-872a-d2ba7901ed0e/convert-first-letter-of-string-to-capital?forum=csharpgeneral
-      /// </remarks>
-      public static string MCase(string sText, string sCulture = "")
+      #endregion  
+
+    /// <summary>
+    /// Capitalize the first letter of a string.
+    /// </summary>
+    /// <param name="sText">Source string</param>
+    /// <param name="sCulture">Specific culture string e.g. "en-US"</param>
+    /// <returns>
+    /// <paramref name="sText"/> with the first letter capitalized.
+    /// </returns>
+    /// <remarks>
+    /// Source: https://social.msdn.microsoft.com/Forums/vstudio/en-US/c0872f6d-2975-43e6-872a-d2ba7901ed0e/convert-first-letter-of-string-to-capital?forum=csharpgeneral
+    /// </remarks>
+    public static string MCase(string sText, string sCulture = "")
       {
 
          TextInfo ti;
@@ -346,7 +372,7 @@ namespace libBAUtilCS
       public static string EnQuote(string text)
       {
          return '"' + text + '"';
-         /// Convert.ToChar(34).ToString + text + Convert.ToChar(34).ToString;
+         // Convert.ToChar(34).ToString + text + Convert.ToChar(34).ToString;
       }
 
       /// <summary>
@@ -369,19 +395,24 @@ namespace libBAUtilCS
          return new System.String(' ', (int)count);
       }
 
-      #region "Method StrRepeat()"
+      #region StrRepeat()
       /// <summary>
       /// Mimics VB6's String() Function
       /// </summary>
       /// <param name="character">Character to use</param>
       /// <param name="count">Number of characters</param>
       /// <returns>String of <paramref name="count"/> x <paramref name="character"/></returns>
-
       public static string StrRepeat(char character, Int32 count)
       {
          return new System.String(character, count);
       }
 
+      /// <summary>
+      /// Mimics VB6's String() Function
+      /// </summary>
+      /// <param name="character">Character to use</param>
+      /// <param name="count">Number of characters</param>
+      /// <returns>String of <paramref name="count"/> x <paramref name="character"/></returns>
       public static string StrRepeat(string character, Int32 count)
       {
 
@@ -398,7 +429,7 @@ namespace libBAUtilCS
 
       #endregion
 
-      #region "Date formatting"
+      #region Date formatting
       /// <summary>
       /// Create a date string of format YYYYMMDD[[T]HHNNSS].
       /// </summary>
@@ -409,7 +440,7 @@ namespace libBAUtilCS
       /// <returns>
       /// Date/time formatted as string.
       /// </returns>
-      public static string DateYMD(DateTime dtmDate, Boolean appendTime = false, string dateSeparator = "", 
+      public static string DateYMD(DateTime dtmDate, bool appendTime = false, string dateSeparator = "", 
          string dateTimeSeparator = "T")
       {
 
@@ -429,63 +460,94 @@ namespace libBAUtilCS
       }
       #endregion
 
-      #region "VB6 String constants"
-      // ** Replacements for various handy VB6 string constants
 
-      /// <summary>
-      /// Mimics VB6's vbNewLine constant.
-      /// </summary>
-      /// <param name="n">Return this number of new lines</param>
-      /// <returns>OS-specific new line character(s)</returns>
-      public static string vbNewLine(Int32 n = 1)
-      {
-         string sResult = System.String.Empty;
+    #region VB6 String constants
 
-         for (Int32 i = 1; i <= n; i++)
-         {
-            sResult += Environment.NewLine;
-         }
-         return sResult;
-      }
+    // ** Replacements for various handy VB6 string constants
 
-      /// <summary>
-      /// Mimics VB6's vbNullString constant
-      /// </summary>
-      /// <returns>String.Empty</returns>
-      public static string vbNullString()
-         {
-            return System.String.Empty;
-      }
+    /// <summary>
+    /// Mimics VB6's vbNewLine constant.
+    /// </summary>
+    /// <param name="n">Return this number of new lines</param>
+    /// <returns>OS-specific new line character(s)</returns>
+    public static string vbNewLine(Int32 n = 1)
+    {
+        string sResult = System.String.Empty;
+
+        for (Int32 i = 1; i <= n; i++)
+        {
+          sResult += Environment.NewLine;
+        }
+        return sResult;
+    }
+
+    /// <summary>
+    /// Mimics VB6's vbNullString constant
+    /// </summary>
+    /// <returns>String.Empty</returns>
+    public static string vbNullString()
+        {
+          return System.String.Empty;
+    }
       
-      /// <summary>
-      /// Constant for a double quotation mark (").
-      /// </summary>
-      /// <param name="n">Number of DQs to return</param>
-      /// <returns><paramref name="n"/> "</returns>
-      public static string vbQuote(Int32 n = 1)
-      {
-         string sResult = System.String.Empty;
-         for (Int32 i = 1; i <= n; i++)
-         {
-            sResult += Convert.ToChar(34).ToString();
-         }
-         return sResult;
-      }
+    /// <summary>
+    /// Constant for a double quotation mark (").
+    /// </summary>
+    /// <param name="n">Number of DQs to return</param>
+    /// <returns><paramref name="n"/> "</returns>
+    public static string vbQuote(Int32 n = 1)
+    {
+        string sResult = System.String.Empty;
+        for (Int32 i = 1; i <= n; i++)
+        {
+          sResult += Convert.ToChar(34).ToString();
+        }
+        return sResult;
+    }
 
-   /// <summary>
-   /// Mimics VB6's vbTab constant.
-   /// </summary>
-   /// <param name="n">Number of tabs to return</param>
-   /// <returns><paramref name="n"/> tabs.</returns>
-   public static string vbTab(Int32 n = 1)
-      {
-         string sResult = System.String.Empty;
-         for (Int32 i = 1; i <= n; i++)
-         {
-            sResult += System.Convert.ToChar(9).ToString();
-         }
-         return sResult;
-      }
-      #endregion
-   } // class StringUtil
+  /// <summary>
+  /// Mimics VB6's vbTab constant.
+  /// </summary>
+  /// <param name="n">Number of tabs to return</param>
+  /// <returns><paramref name="n"/> tabs.</returns>
+  public static string vbTab(Int32 n = 1)
+    {
+        string sResult = System.String.Empty;
+        for (Int32 i = 1; i <= n; i++)
+        {
+          sResult += System.Convert.ToChar(9).ToString();
+        }
+        return sResult;
+    }
+    #endregion
+
+    #region ListToString
+
+    /// <summary>
+    /// Convert a List of string to one string
+    /// </summary>
+    /// <param name="listString">List<paramref name="listString"/></param>
+    /// <returns>"Readable" string</returns>
+    public static string ListToString(List<String> listString)
+    {
+      return ListToString(listString,System.Environment.NewLine);
+    } // ListToString(List<String> listString, string itemSeparator)
+
+    /// <summary>
+    /// Convert a List of string to one string
+    /// </summary>
+    /// <param name="listString">List<paramref name="listString"/></param>
+    /// <param name="itemSeparator">Separate individual items with this.</param>
+    /// <returns>"Readable" string</returns>
+    public static string ListToString(List<String> listString, string itemSeparator)
+    {
+      String result = String.Empty;
+      String[] arrTemp = listString.ToArray();
+
+      return String.Join(itemSeparator, arrTemp);
+    } // ListToString(List<String> listString, string itemSeparator)
+
+    #endregion
+
+  } // class StringHelper
 }

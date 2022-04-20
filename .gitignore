@@ -13,6 +13,9 @@
 # DevTracker
 libBAUtilCS.dt
 
+# Sample data
+DATA/*
+
 # Build results
 [Dd]ebug/
 [Dd]ebugPublic/

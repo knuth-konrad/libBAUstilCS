@@ -2,9 +2,9 @@ using System;
 using System.ComponentModel;
 // using static System.String;
 
-using static libECKDUtilCS.StringUtil;
+using static libBAUtilCS.StringHelper;
 
-namespace libECKDUtilCS
+namespace libBAUtilCS
 {
    /// <summary>
    /// Enhanced with mostly tourism-related methods/properties <see cref="System.DateTime"/> object.
@@ -13,26 +13,41 @@ namespace libECKDUtilCS
    /// Inherits <see cref="DateTime"/>
    /// </remarks>
    [DefaultProperty("Date")]
-   public class DateTimeUtil
+   public class DateTimeHelper
    {
       #region "Declares"
       /// <summary>
       /// Format of IATA date, ddMMM or ddDMMMyy
       /// </summary>
-      public enum eIATADateType : int
+      public enum IATADateType : int
       {
+         /// <summary>
+         /// Long date format, i.e. ddMMMyy
+         /// </summary>
          DateLong,
+         /// <summary>
+         /// Short date format, i.e. ddMMM
+         /// </summary>
          DateShort
       }
 
       /// <summary>
       /// Casing of month abbreviations
       /// </summary>
-      public enum eIATADateCasing : int
+      public enum IATADateCasing : int
       {
-         ToLower, // 01jan
-         ToMixed, // 01Jan
-         ToUpper, // 01JAN
+         /// <summary>
+         /// Lower case, e.g. 01jan
+         /// </summary>
+         ToLower,
+         /// <summary>
+         /// Mixed case, e.g. 01Jan
+         /// </summary>
+         ToMixed,
+         /// <summary>
+         /// Uper case, e.g. 01JAN
+         /// </summary>
+         ToUpper
       }
 
       private DateTime mdtmDate;
@@ -108,12 +123,12 @@ namespace libECKDUtilCS
       /// <summary>
       /// Gets the current date represented by <see cref="Date"/> in IATA long date format, e.g. 01JAN21.
       /// </summary>
-      public string IATADateLong => this.ToDateIATA(eIATADateType.DateLong, eIATADateCasing.ToUpper);
+      public string IATADateLong => this.ToDateIATA(IATADateType.DateLong, IATADateCasing.ToUpper);
 
       /// <summary>
       /// Gets the current date represented by <see cref="Date"/> in IATA short date format, e.g. 01JAN.
       /// </summary>
-      public string IATADateShort => this.ToDateIATA(eIATADateType.DateShort, eIATADateCasing.ToUpper);
+      public string IATADateShort => this.ToDateIATA(IATADateType.DateShort, IATADateCasing.ToUpper);
 
       /// <summary>
       /// Gets a value that indicates whether the time represented by this instance is based on local time, Coordinated Universal Time (UTC), or neither.
@@ -320,7 +335,7 @@ namespace libECKDUtilCS
       /// <returns>
       /// <see langword="true"/> if the value parameter equals the value of this instance; otherwise, <see langword="false"/>. 
       /// </returns>
-      public Boolean Equals(DateTime value)
+      public bool Equals(DateTime value)
       {
          return this.Date.Equals(value);
       }
@@ -333,7 +348,7 @@ namespace libECKDUtilCS
       /// <returns>
       /// <see langword="true"/> if the two values are equal; otherwise, <see langword="false"/>.
       /// </returns>
-      public Boolean Equals(DateTime t1, DateTime t2)
+      public bool Equals(DateTime t1, DateTime t2)
       {
          return DateTime.Equals(t1, t2);
       }
@@ -345,7 +360,7 @@ namespace libECKDUtilCS
       /// <returns>
       /// <see langword="true"/> if value is an instance of DateTime and equals the value of this instance; otherwise, <see langword="false"/>.
       /// </returns>
-      public override Boolean Equals(Object value)
+      public override bool Equals(Object value)
       {
          return this.Date.Equals(value);
       }
@@ -438,7 +453,7 @@ namespace libECKDUtilCS
       /// <see cref="DateTimeKind.Unspecified"/> and the value of this instance of <see cref="System.DateTime"/> is within the 
       /// daylight saving time range for the local time zone; false if <see cref="DateTime.Kind"/> is <see cref="DateTimeKind.Utc"/>.
       /// </returns>
-      public Boolean IsDaylightSavingTime()
+      public bool IsDaylightSavingTime()
       {
          return this.Date.IsDaylightSavingTime();
       }
@@ -448,7 +463,7 @@ namespace libECKDUtilCS
       /// </summary>
       /// <param name="year">A 4-digit year.</param>
       /// <returns><see langword="true"/> if year is a leap year; otherwise, <see langword="false"/> .</returns>
-      public Boolean IsLeapYear(int year)
+      public bool IsLeapYear(int year)
       {
          return DateTime.IsLeapYear(year);
       }
@@ -603,13 +618,13 @@ namespace libECKDUtilCS
       /// Converts a <see cref="System.DateTime"/> to a IATA date string
       /// </summary>
       /// <param name="dateType">
-      /// Format of IATA date <see cref="eIATADateType"/>
+      /// Format of IATA date <see cref="IATADateType"/>
       /// </param>
       /// <returns><see cref="System.DateTime"/>Current <see cref="DateTime"/> as a string formatted as (ddMMM)</returns>
-      public string ToDateIATA(eIATADateType dateType)
+      public string ToDateIATA(IATADateType dateType)
       {
          // Upper case is default
-         if (dateType == eIATADateType.DateLong)
+         if (dateType == IATADateType.DateLong)
          {
             return this.Date.ToString("ddMMMyy", System.Globalization.CultureInfo.InvariantCulture).ToUpper();
          }
@@ -623,18 +638,18 @@ namespace libECKDUtilCS
       /// Converts a <see cref="System.DateTime"/> to a IATA date string
       /// </summary>
       /// <param name="nameCasing">
-      /// Casing of IATA date <see cref="eIATADateCasing"/>
+      /// Casing of IATA date <see cref="IATADateCasing"/>
       /// </param>
       /// <returns><see cref="System.DateTime"/>Current <see cref="DateTime"/> as a string formatted as (ddMMM)</returns>
-      public string ToDateIATA(eIATADateCasing nameCasing)
+      public string ToDateIATA(IATADateCasing nameCasing)
       { 
          switch (nameCasing)
          {
-            case eIATADateCasing.ToLower:
+            case IATADateCasing.ToLower:
                return this.Date.ToString("ddMMM", System.Globalization.CultureInfo.InvariantCulture).ToLower();
-            case eIATADateCasing.ToMixed:
+            case IATADateCasing.ToMixed:
                return this.Date.ToString("ddMMM", System.Globalization.CultureInfo.InvariantCulture);
-            case eIATADateCasing.ToUpper:
+            case IATADateCasing.ToUpper:
                return this.Date.ToString("ddMMM", System.Globalization.CultureInfo.InvariantCulture).ToUpper();
             default:
                return this.Date.ToString("ddMMM", System.Globalization.CultureInfo.InvariantCulture).ToUpper();
@@ -645,24 +660,24 @@ namespace libECKDUtilCS
       /// Converts a <see cref="System.DateTime"/> to a IATA date string
       /// </summary>
       /// <param name="dateType">
-      /// Format of IATA date <see cref="eIATADateType"/>
+      /// Format of IATA date <see cref="IATADateType"/>
       /// </param>
       /// <param name="nameCasing">
-      /// Casing of IATA date <see cref="eIATADateCasing"/>
+      /// Casing of IATA date <see cref="IATADateCasing"/>
       /// </param>
       /// <returns><see cref="System.DateTime"/>Current <see cref="Date"/> as a string format (ddMMM)</returns>
-      public string ToDateIATA(eIATADateType dateType, eIATADateCasing nameCasing)
+      public string ToDateIATA(IATADateType dateType, IATADateCasing nameCasing)
       {
 
          string sResult = this.ToDateIATA(dateType);
 
          switch (nameCasing)
          {
-            case eIATADateCasing.ToLower:
+            case IATADateCasing.ToLower:
                return sResult.ToLower();
-            case eIATADateCasing.ToMixed:
+            case IATADateCasing.ToMixed:
                return sResult;
-            case eIATADateCasing.ToUpper:
+            case IATADateCasing.ToUpper:
                return sResult.ToUpper();
             default:
                return sResult.ToUpper();
@@ -785,15 +800,26 @@ namespace libECKDUtilCS
       {
          return this.Date.ToString(format, provider);
       }
-      #endregion
 
+      /// <summary>
+      /// Implements <see cref="Object.GetHashCode()"/>
+      /// </summary>
+      /// <returns><see cref="Object.GetHashCode()"/></returns>
+      public override Int32 GetHashCode()
+      {
+         var hashCode = -794484751;
+         hashCode = hashCode * -1521134295 + this.Date.GetHashCode();
+         hashCode = hashCode * -1521134295 + this.DateTime.GetHashCode();
+         return hashCode;
+      }
+      #endregion
 
       #region "Constructor/Dispose"
 
       /// <summary>
       /// Initializes a new instance of the DateTime structure.
       /// </summary>
-      public DateTimeUtil()
+      public DateTimeHelper()
       { 
          this.Date = new DateTime();
       }
@@ -802,7 +828,7 @@ namespace libECKDUtilCS
       /// Initializes a new instance of the <see cref="DateTimeOffset"/> structure using the specified DateTime value.
       /// </summary>
       /// <param name="newDate">A date and time.</param>
-      public DateTimeUtil(DateTime newDate)
+      public DateTimeHelper(DateTime newDate)
       {
          this.Date = newDate;
       }
@@ -811,7 +837,7 @@ namespace libECKDUtilCS
       /// Initializes a new instance of the DateTime structure to a specified number of ticks.
       /// </summary>
       /// <param name="ticks">A date and time expressed in the number of 100-nanosecond intervals that have elapsed since January 1, 0001 at 00:00:00.000 in the Gregorian calendar.</param>
-      public DateTimeUtil(Int64 ticks)
+      public DateTimeHelper(Int64 ticks)
       { 
          this.Date = new DateTime(ticks);
       }
@@ -821,7 +847,7 @@ namespace libECKDUtilCS
       /// </summary>
       /// <param name="ticks">A date and time expressed in the number of 100-nanosecond intervals that have elapsed since January 1, 0001 at 00:00:00.000 in the Gregorian calendar.</param>
       /// <param name="kind">Coordinated Universal Time (UTC) or local time</param>
-      public DateTimeUtil(Int64 ticks, DateTimeKind kind)
+      public DateTimeHelper(Int64 ticks, DateTimeKind kind)
       {
          this.Date = new DateTime(ticks, kind);
       }
@@ -832,7 +858,7 @@ namespace libECKDUtilCS
       /// <param name="year">The year (1 through 9999).</param>
       /// <param name="month">The month (1 through 12).</param>
       /// <param name="day">The day (1 through the number of days in month).</param>
-      public DateTimeUtil(Int32 year, Int32 month, Int32 day)
+      public DateTimeHelper(Int32 year, Int32 month, Int32 day)
       {
          this.Date = new DateTime(year, month, day);
       }
@@ -844,7 +870,7 @@ namespace libECKDUtilCS
       /// <param name="month">The month (1 through the number of months in calendar).</param>
       /// <param name="day">The day (1 through the number of days in month).</param>
       /// <param name="calendar">The calendar that is used to interpret year, month, and day.</param>
-      public DateTimeUtil(Int32 year, Int32 month, Int32 day, System.Globalization.Calendar calendar)
+      public DateTimeHelper(Int32 year, Int32 month, Int32 day, System.Globalization.Calendar calendar)
       {
          this.Date = new DateTime(year, month, day, calendar);
       }
@@ -858,7 +884,7 @@ namespace libECKDUtilCS
       /// <param name="hour">The hours (0 through 23).</param>
       /// <param name="minute">The minutes (0 through 59).</param>
       /// <param name="second">The seconds (0 through 59).</param>
-      public DateTimeUtil(Int32 year, Int32 month, Int32 day, Int32 hour, Int32 minute, Int32 second)
+      public DateTimeHelper(Int32 year, Int32 month, Int32 day, Int32 hour, Int32 minute, Int32 second)
       {
          this.Date = new DateTime(year, month, day, hour, minute, second);
       }
@@ -873,7 +899,7 @@ namespace libECKDUtilCS
       /// <param name="minute">The minutes (0 through 59).</param>
       /// <param name="second">The seconds (0 through 59).</param>
       /// <param name="kind">One of the enumeration values that indicates whether year, month, day, hour, minute and second specify a local time, Coordinated Universal Time (UTC), or neither.</param>
-      public DateTimeUtil(Int32 year, Int32 month, Int32 day, Int32 hour, Int32 minute, Int32 second, DateTimeKind kind)
+      public DateTimeHelper(Int32 year, Int32 month, Int32 day, Int32 hour, Int32 minute, Int32 second, DateTimeKind kind)
       {
          this.Date = new DateTime(year, month, day, hour, minute, second, kind);
       }
@@ -888,7 +914,7 @@ namespace libECKDUtilCS
       /// <param name="minute">The minutes (0 through 59).</param>
       /// <param name="second">The seconds (0 through 59).</param>
       /// <param name="calendar">The calendar that is used to interpret year, month, and day.</param>
-      public DateTimeUtil(Int32 year, Int32 month, Int32 day, Int32 hour, Int32 minute, Int32 second, System.Globalization.Calendar calendar)
+      public DateTimeHelper(Int32 year, Int32 month, Int32 day, Int32 hour, Int32 minute, Int32 second, System.Globalization.Calendar calendar)
       {
          this.Date = new DateTime(year, month, day, hour, minute, second, calendar);
       }
@@ -903,7 +929,7 @@ namespace libECKDUtilCS
       /// <param name="minute">The minutes (0 through 59).</param>
       /// <param name="second">The seconds (0 through 59).</param>
       /// <param name="millisecond">The milliseconds (0 through 999).</param>
-      public DateTimeUtil(Int32 year, Int32 month, Int32 day, Int32 hour, Int32 minute, Int32 second, Int32 millisecond)
+      public DateTimeHelper(Int32 year, Int32 month, Int32 day, Int32 hour, Int32 minute, Int32 second, Int32 millisecond)
       {
          this.Date = new DateTime(year, month, day, hour, minute, second, millisecond);
       }
@@ -919,7 +945,7 @@ namespace libECKDUtilCS
       /// <param name="second">The seconds (0 through 59).</param>
       /// <param name="millisecond">The milliseconds (0 through 999).</param>
       /// <param name="kind">One of the enumeration values that indicates whether year, month, day, hour, minute, second, and millisecond specify a local time, Coordinated Universal Time (UTC), or neither.</param>
-      public DateTimeUtil(Int32 year, Int32 month, Int32 day, Int32 hour, Int32 minute, Int32 second, Int32 millisecond, DateTimeKind kind)
+      public DateTimeHelper(Int32 year, Int32 month, Int32 day, Int32 hour, Int32 minute, Int32 second, Int32 millisecond, DateTimeKind kind)
       {
          this.Date = new DateTime(year, month, day, hour, minute, second, millisecond, kind);
       }
@@ -935,7 +961,7 @@ namespace libECKDUtilCS
       /// <param name="second">The seconds (0 through 59).</param>
       /// <param name="millisecond">The milliseconds (0 through 999).</param>
       /// <param name="calendar">The calendar that is used to interpret year, month, and day.</param>
-      public DateTimeUtil(Int32 year, Int32 month, Int32 day, Int32 hour, Int32 minute, Int32 second, Int32 millisecond, System.Globalization.Calendar calendar)
+      public DateTimeHelper(Int32 year, Int32 month, Int32 day, Int32 hour, Int32 minute, Int32 second, Int32 millisecond, System.Globalization.Calendar calendar)
       {
          this.Date = new DateTime(year, month, day, hour, minute, second, millisecond, calendar);
       }
@@ -952,7 +978,7 @@ namespace libECKDUtilCS
       /// <param name="millisecond">The milliseconds (0 through 999).</param>
       /// <param name="calendar">The calendar that is used to interpret year, month, and day.</param>
       /// <param name="kind">One of the enumeration values that indicates whether year, month, day, hour, minute, second, and millisecond specify a local time, Coordinated Universal Time (UTC), or neither.</param>
-      public DateTimeUtil(Int32 year, Int32 month, Int32 day, Int32 hour, Int32 minute, Int32 second, Int32 millisecond, System.Globalization.Calendar calendar, DateTimeKind kind)
+      public DateTimeHelper(Int32 year, Int32 month, Int32 day, Int32 hour, Int32 minute, Int32 second, Int32 millisecond, System.Globalization.Calendar calendar, DateTimeKind kind)
       {
 
          this.Date = new DateTime(year, month, day, hour, minute, second, millisecond, calendar, kind);
@@ -962,11 +988,11 @@ namespace libECKDUtilCS
       /// Initializes a new instance of the DateTime structure to the specified IATA date.
       /// </summary>
       /// <param name="iataDate">IATA date in the form e.g. 01JAN or 01JAN21</param>
-      public DateTimeUtil(string iataDate)
+      public DateTimeHelper(string iataDate)
       {
          this.DateTime = this.ToDate(iataDate);
       }
       #endregion
 
-   }  // DateTimeUtil
+   }  // DateTimeHelper
 }
