@@ -460,7 +460,6 @@ namespace libBAUtilCS
     }
     #endregion
 
-
     #region Warp
 
     /// <summary>
@@ -588,13 +587,13 @@ namespace libBAUtilCS
     /// <param name="leftChar">Left 'bracket'</param>
     /// <param name="rightChar">Right 'bracket'.</param>
     /// <returns>Enclosed <paramref name="text"/></returns>
-    public static string UnWrap(string text, char LeftChar, char rightChar)
+    public static string UnWrap(string text, char leftChar, char rightChar)
     {
-      return LeftChar + text + rightChar;
+      // ToDo: real implementation, stub for now
+      return string.Empty;
     }
 
     #endregion
-
 
     #region VB6 String constants
 
