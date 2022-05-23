@@ -697,7 +697,7 @@ namespace libBAUtilCS.Utils.Args
       /// <summary>
       /// Initializes a new instance of the command line parameter key/value pair object.
       /// </summary>
-      /// <param name="originalParam">Key/value pair as originally passed via command line, i.e. /file=MyFile.txt</param>
+      /// <param name="originalParam">Key/value pair as originally passed via command line, e.g. /file=MyFile.txt</param>
       /// <param name="keyShort">Short notation of parameter name, i.e. '/f'</param>
       /// <param name="keyLong">Long notation of parameter name, i.e. /file</param>
       /// <param name="value">The actual value passed.</param>

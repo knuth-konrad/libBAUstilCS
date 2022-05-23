@@ -9,10 +9,10 @@ namespace libBAUtilCS
    /// <summary>
    /// General object helpers
    /// </summary>
-   class ObjectHelper
+   public class ObjectHelper
    {
 
-      #region "Serialization"
+      #region Serialization
 
       /// <summary>
       /// Returns the enumeration member's name for the specific enumeration value.
