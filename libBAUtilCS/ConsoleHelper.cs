@@ -162,6 +162,18 @@ namespace libBAUtilCS
     }
     #endregion  // "AppCopyright"
 
+    #region AnyKey
+    /// <summary>
+    /// Pauses the program execution and waits for a key press
+    /// </summary>
+    /// <param name="blankLinesBefore">Number of blank lines before the message</param>
+    /// <param name="blankLinesAfter">Number of blank lines after the message</param>
+    public static void AnyKey(Int32 blankLinesBefore = 0,
+                            Int32 blankLinesAfter = 0)
+    {
+      AnyKey("-- Press any key to continue --", blankLinesBefore, blankLinesAfter);
+    }  // AnyKey
+
     /// <summary>
     /// Pauses the program execution and waits for a key press
     /// </summary>
@@ -178,13 +190,14 @@ namespace libBAUtilCS
       Console.ReadKey(true);
     }  // AnyKey
 
+    #endregion
 
-   /// <summary>
-   /// Insert a blank line at the current position.
-   /// </summary>
-   /// <param name="blankLines">Number of blank lines to insert.</param>
-   /// <param name="addSeparatingLine"><see langword="true"/>: Add a visual separation indicator before the blank line(s)</param>
-   public static void BlankLine(Int32 blankLines = 1, bool addSeparatingLine = false)
+    /// <summary>
+    /// Insert a blank line at the current position.
+    /// </summary>
+    /// <param name="blankLines">Number of blank lines to insert.</param>
+    /// <param name="addSeparatingLine"><see langword="true"/>: Add a visual separation indicator before the blank line(s)</param>
+    public static void BlankLine(Int32 blankLines = 1, bool addSeparatingLine = false)
    {
 
       // Safe guard

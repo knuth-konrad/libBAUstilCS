@@ -9,7 +9,7 @@ using static libBAUtilCS.FilesystemHelper;
 namespace libBAUtilCS
 {
 
-   // ToDo: Implement whole class properly. VB.NET translation fails because of C# missiong '\' operator
+   // ToDo: Implement whole class properly. VB.NET translation fails because of C# missing '\' operator
    // See https://stackoverflow.com/questions/10168240/encrypting-decrypting-a-string-in-c-sharp
    // and https://docs.microsoft.com/en-us/dotnet/standard/security/walkthrough-creating-a-cryptographic-application
 
