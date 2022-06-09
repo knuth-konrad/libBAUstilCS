@@ -5,10 +5,10 @@ using static System.IO.Path;
 
 namespace libBAUtilCS
 {
+
   /// <summary>
   /// General file system helper methods
   /// </summary>
-
   public class FilesystemHelper
   {
 
@@ -211,4 +211,5 @@ namespace libBAUtilCS
     } // BackupFile
 
   } // class FilesystemHelper
+
 }

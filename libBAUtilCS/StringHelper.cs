@@ -580,19 +580,6 @@ namespace libBAUtilCS
       return text;
     }
 
-    /// <summary>
-    /// Wraps a string into <paramref name="leftChar"/> and <paramref name="rightChar"/>
-    /// </summary>
-    /// <param name="text">Original string</param>
-    /// <param name="leftChar">Left 'bracket'</param>
-    /// <param name="rightChar">Right 'bracket'.</param>
-    /// <returns>Enclosed <paramref name="text"/></returns>
-    public static string UnWrap(string text, char leftChar, char rightChar)
-    {
-      // ToDo: real implementation, stub for now
-      return string.Empty;
-    }
-
     #endregion
 
     #region VB6 String constants

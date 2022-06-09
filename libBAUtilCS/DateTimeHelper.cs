@@ -1,12 +1,12 @@
 using System;
 using System.ComponentModel;
-// using static System.String;
 
 using static libBAUtilCS.StringHelper;
 
 namespace libBAUtilCS
 {
-   /// <summary>
+
+  /// <summary>
    /// Enhanced with mostly tourism-related methods/properties <see cref="System.DateTime"/> object.
    /// </summary>
    /// <remarks>
@@ -15,7 +15,7 @@ namespace libBAUtilCS
    [DefaultProperty("Date")]
    public class DateTimeHelper
    {
-      #region "Declares"
+      #region Declares
       /// <summary>
       /// Format of IATA date, ddMMM or ddDMMMyy
       /// </summary>
@@ -53,7 +53,7 @@ namespace libBAUtilCS
       private DateTime mdtmDate;
       #endregion
 
-      #region "Properties - Public"
+      #region Properties - Public
 
       /// <summary>
       /// Gets a DateTime value that represents the date component of the current <see cref="DateTimeOffset"/> object.
@@ -196,7 +196,7 @@ namespace libBAUtilCS
       public DateTimeOffset MinValue => DateTime.MinValue;
       #endregion
 
-      #region "Methods - Public"
+      #region Methods - Public
       /// <summary>
       /// Returns a new DateTime that adds the value of the specified TimeSpan to the value of this instance.
       /// </summary>
@@ -814,7 +814,7 @@ namespace libBAUtilCS
       }
       #endregion
 
-      #region "Constructor/Dispose"
+      #region Constructor/Dispose
 
       /// <summary>
       /// Initializes a new instance of the DateTime structure.
@@ -992,7 +992,7 @@ namespace libBAUtilCS
       {
          this.DateTime = this.ToDate(iataDate);
       }
-      #endregion
+    #endregion
 
-   }  // DateTimeHelper
+  }  // class DateTimeHelper
 }

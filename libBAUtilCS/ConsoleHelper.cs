@@ -166,6 +166,14 @@ namespace libBAUtilCS
     /// <summary>
     /// Pauses the program execution and waits for a key press
     /// </summary>
+    public static void AnyKey()
+    {
+      AnyKey("-- Press any key to continue --", 0, 0);
+    }  // AnyKey
+
+    /// <summary>
+    /// Pauses the program execution and waits for a key press
+    /// </summary>
     /// <param name="blankLinesBefore">Number of blank lines before the message</param>
     /// <param name="blankLinesAfter">Number of blank lines after the message</param>
     public static void AnyKey(Int32 blankLinesBefore = 0,
@@ -217,7 +225,6 @@ namespace libBAUtilCS
       }
 
    }  // BlankLine
-
 
     #region WriteIndent
 

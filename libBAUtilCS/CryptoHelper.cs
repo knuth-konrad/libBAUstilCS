@@ -21,8 +21,8 @@ namespace libBAUtilCS
    /// </remarks>
    public sealed class CryptoHelper
    {
-      #region "Declarations"
-      // This constant is used to determine the keysize of the encryption algorithm in bits.
+      #region Declarations
+      // This constant is used to determine the key size of the encryption algorithm in bits.
       // We divide this by 8 within the code below to get the equivalent number of bytes.
       private const int Keysize = 256;
 
@@ -36,7 +36,7 @@ namespace libBAUtilCS
       public string Passphrase = String.Empty;
       #endregion
 
-      #region "Methods - Public"
+      #region Methods - Public
 
       /// <summary>
       /// Encrypts a string.
@@ -50,7 +50,7 @@ namespace libBAUtilCS
       public string EncryptString(string plainText, string passPhrase = "")
       {
          
-         // Passphrased set on ojbect initialisation?
+         // Passphrase set on object initialization?
          if (passPhrase == String.Empty && Passphrase != String.Empty)
          {
             passPhrase = Passphrase;
@@ -103,7 +103,7 @@ namespace libBAUtilCS
       public string DecryptString(string cipherText, string passPhrase = "")
       {
 
-         // Passphrased set on object initialisation?
+         // Passphrase d set on object initialization?
          if (passPhrase == String.Empty && Passphrase != String.Empty)
          {
             passPhrase = Passphrase;
