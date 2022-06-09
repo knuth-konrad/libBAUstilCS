@@ -706,6 +706,7 @@ namespace libBAUtilCS.Utils.Args
     /// <summary>
     /// Overwrites .ToString()
     /// </summary>
+    /// <returns>Key/Value as a string.</returns>
     public override string ToString()
     {
       string sText = this.Key;
@@ -777,6 +778,8 @@ namespace libBAUtilCS.Utils.Args
     /// <summary>
     /// Short and long parameter name
     /// </summary>
+    /// <param name="longKey">Long parameter name, e.g. 'LineFeed'.</param>
+    /// <param name="shortKey">Short parameter name, e.g. 'lf'</param>
     public KeyValueBase(string shortKey = "", string longKey = "")
     {
       KeyLong = longKey;
@@ -786,10 +789,11 @@ namespace libBAUtilCS.Utils.Args
     /// <summary>
     /// Short and long parameter name
     /// </summary>
-    public KeyValueBase(KeyValueBase o)
+    /// <param name="keyValue"><see cref="KeyValue"/> object.</param>
+    public KeyValueBase(KeyValueBase keyValue)
     {
-      KeyLong = o.KeyLong;
-      KeyShort = o.KeyShort;
+      KeyLong = keyValue.KeyLong;
+      KeyShort = keyValue.KeyShort;
     }
 
   }  // class KeyValueBase
