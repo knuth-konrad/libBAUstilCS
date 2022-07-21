@@ -282,7 +282,7 @@ namespace libBAUtilCS
     /// <param name="text">Output text</param>
     /// <param name="indentBy">Number of leading spaces</param>
     /// <param name="addNewLine">Add a new line after the last line of <paramref name="text"/></param>
-    public static void WriteOK(string text, ConsoleColor fgColor = ConsoleColor.Red, ConsoleColor bgColor = ConsoleColor.Black, bool addNewLine = true)
+    public static void WriteOK(string text, ConsoleColor fgColor = ConsoleColor.Green, ConsoleColor bgColor = ConsoleColor.Black, bool addNewLine = true)
     {
 
       Console.BackgroundColor = bgColor;
@@ -298,7 +298,7 @@ namespace libBAUtilCS
     /// <param name="text">Output text</param>
     /// <param name="indentBy">Number of leading spaces</param>
     /// <param name="addNewLine">Add a new line after the last line of <paramref name="text"/></param>
-    public static void WriteOK(string text, Int32 indentBy, ConsoleColor fgColor = ConsoleColor.Red, ConsoleColor bgColor = ConsoleColor.Black, bool addNewLine = true)
+    public static void WriteOK(string text, Int32 indentBy, ConsoleColor fgColor = ConsoleColor.Green, ConsoleColor bgColor = ConsoleColor.Black, bool addNewLine = true)
     {
 
       Console.BackgroundColor = bgColor;
@@ -314,7 +314,7 @@ namespace libBAUtilCS
     /// <param name="text">Output text</param>
     /// <param name="indentBy">Number of leading spaces</param>
     /// <param name="addNewLine">Add a new line after the last line of <paramref name="text"/></param>
-    public static void WriteOK(string[] text, Int32 indentBy, ConsoleColor fgColor = ConsoleColor.Red, ConsoleColor bgColor = ConsoleColor.Black, bool addNewLine = true)
+    public static void WriteOK(string[] text, Int32 indentBy, ConsoleColor fgColor = ConsoleColor.Green, ConsoleColor bgColor = ConsoleColor.Black, bool addNewLine = true)
     {
 
       Console.BackgroundColor = bgColor;
