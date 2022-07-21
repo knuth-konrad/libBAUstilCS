@@ -273,8 +273,12 @@ namespace libBAUtilCS.Utils.Args
     /// Initializes the object by parsing System.Environment.GetCommandLineArgs()
     /// </summary>
     /// <param name="cmdLineArgs">Command line parameter string, e.g. /abc=123 /def</param>
+    /// <param name="allowEmpty">
+    /// <see langword="true"/> = allow for no parameters passed at all, i.e. 
+    /// all parameters may be optional.
+    /// </param>
     /// <returns><see langword="true"/>/<see langword="false"/></returns>
-    public bool Initialize(string cmdLineArgs = "")
+    public bool Initialize(string cmdLineArgs = "", Boolean allowEmpty = false)
     {
       // Clear everything, as we're parsing anew.
       KeyValues = new List<KeyValue>();
@@ -282,14 +286,24 @@ namespace libBAUtilCS.Utils.Args
       if (cmdLineArgs.Length < 1)
       {
         string[] asArgs = System.Environment.GetCommandLineArgs();
-        if (asArgs.Length < 2)
+        if (asArgs.Length < 2 && allowEmpty == false)
         {
           // No command line arguments passed
           return false;
         }
-        // When using System.Environment.GetCommandLineArgs(), the 1st array element is the executable's name
-        OriginalParameters = asArgs[1];
-        return ParseCmd(asArgs, 1);
+        else
+        {
+          if (asArgs.Length < 2 && allowEmpty == true)
+          {
+            return true;
+          }
+          else
+          {
+            // When using System.Environment.GetCommandLineArgs(), the 1st array element is the executable's name
+            OriginalParameters = asArgs[1];
+            return ParseCmd(asArgs, 1);
+          }
+        }
       }
       else
       {
