@@ -1,4 +1,4 @@
-// using System;
+using System;
 // using System.Collections.Generic;
 // using System.Linq;
 // using System.Text;
@@ -34,6 +34,7 @@ namespace libBAUtilCS
     private string msAuthor = COPY_AUTHOR;
     private string msCompany = COPY_COMPANYNAME;
     private string msLineSeparator = CON_SEPARATOR;
+    private Int32 mlStartYear = -1;
 
     #region Properties - Public
 
@@ -64,6 +65,15 @@ namespace libBAUtilCS
       set { msLineSeparator = value; }
     }
 
+    /// <summary>
+    /// The copyright's starting year
+    /// </summary>
+    public Int32 StartYear
+    {
+      get { return mlStartYear; }
+      set { mlStartYear = value; }
+    }
+
     #endregion
 
     #region Constructor
@@ -74,12 +84,14 @@ namespace libBAUtilCS
     /// <param name="authorName">Application developer</param>
     /// <param name="companyName">Copyright holder</param>
     /// <param name="lineSeparator">Line separator</param>
-    public ConHelperData(string authorName = COPY_AUTHOR, string companyName = COPY_COMPANYNAME, 
-      string lineSeparator = CON_SEPARATOR)
+    /// <param name="startYear">Copyright notice start year</param>
+    public ConHelperData(string authorName = COPY_AUTHOR, string companyName = COPY_COMPANYNAME,
+      string lineSeparator = CON_SEPARATOR, Int32 startYear = -1)
     {
       Author = authorName;
       Company = companyName;
       LineSeparator = lineSeparator;
+      StartYear = startYear;
     }
 
     #endregion
