@@ -119,7 +119,7 @@ namespace libBAUtilCS
     /// <param name="showAuthor">Show <see cref="ConHelperData.Author"/></param>
     public static void AppCopyright(bool trailingBlankLine = true, bool showAuthor = false)
     {
-      AppCopyright(DateTime.Now.Year.ToString(), ConsoleData.Company, trailingBlankLine, showAuthor);
+      AppCopyright(GetYearsString(ConsoleData.StartYear), ConsoleData.Company, trailingBlankLine, showAuthor);
     }
 
     /// <summary>
@@ -130,7 +130,7 @@ namespace libBAUtilCS
     /// <param name="showAuthor">Show <see cref="ConHelperData.Author"/></param>
     public static void AppCopyright(string companyName, bool trailingBlankLine = true, bool showAuthor = false)
     {
-      AppCopyright(DateTime.Now.Year.ToString(), companyName, trailingBlankLine, showAuthor);
+      AppCopyright(GetYearsString(ConsoleData.StartYear), companyName, trailingBlankLine, showAuthor);
     }
 
     /// <summary>
@@ -141,7 +141,7 @@ namespace libBAUtilCS
     /// <param name="showAuthor">Show <see cref="ConHelperData.Author"/></param>
     public static void AppCopyright(ConHelperData conData, bool trailingBlankLine = true, bool showAuthor = false)
     {
-      AppCopyright(DateTime.Now.Year.ToString(), conData.Company, trailingBlankLine, showAuthor);
+      AppCopyright(GetYearsString(ConsoleData.StartYear), conData.Company, trailingBlankLine, showAuthor);
     }
 
     /// <summary>
@@ -277,10 +277,11 @@ namespace libBAUtilCS
     #region WriteOK
 
     /// <summary>
-    /// Output text indented by (<paramref name="indentBy"/>) spaces in the 'OK' color
+    /// Output text in the 'OK' color
     /// </summary>
     /// <param name="text">Output text</param>
-    /// <param name="indentBy">Number of leading spaces</param>
+    /// <param name="bgColor">Background color.</param>
+    /// <param name="fgColor">Foreground color.</param>
     /// <param name="addNewLine">Add a new line after the last line of <paramref name="text"/></param>
     public static void WriteOK(string text, ConsoleColor fgColor = ConsoleColor.Green, ConsoleColor bgColor = ConsoleColor.Black, bool addNewLine = true)
     {
@@ -297,6 +298,8 @@ namespace libBAUtilCS
     /// </summary>
     /// <param name="text">Output text</param>
     /// <param name="indentBy">Number of leading spaces</param>
+    /// <param name="bgColor">Background color.</param>
+    /// <param name="fgColor">Foreground color.</param>
     /// <param name="addNewLine">Add a new line after the last line of <paramref name="text"/></param>
     public static void WriteOK(string text, Int32 indentBy, ConsoleColor fgColor = ConsoleColor.Green, ConsoleColor bgColor = ConsoleColor.Black, bool addNewLine = true)
     {
@@ -313,6 +316,8 @@ namespace libBAUtilCS
     /// </summary>
     /// <param name="text">Output text</param>
     /// <param name="indentBy">Number of leading spaces</param>
+    /// <param name="bgColor">Background color.</param>
+    /// <param name="fgColor">Foreground color.</param>
     /// <param name="addNewLine">Add a new line after the last line of <paramref name="text"/></param>
     public static void WriteOK(string[] text, Int32 indentBy, ConsoleColor fgColor = ConsoleColor.Green, ConsoleColor bgColor = ConsoleColor.Black, bool addNewLine = true)
     {
@@ -332,7 +337,8 @@ namespace libBAUtilCS
     /// Output text in the 'Error' color
     /// </summary>
     /// <param name="text">Output text</param>
-    /// <param name="indentBy">Number of leading spaces</param>
+    /// <param name="bgColor">Background color.</param>
+    /// <param name="fgColor">Foreground color.</param>
     /// <param name="addNewLine">Add a new line after the last line of <paramref name="text"/></param>
     public static void WriteError(string text, ConsoleColor fgColor = ConsoleColor.Red, ConsoleColor bgColor = ConsoleColor.Black, bool addNewLine = true)
     {
@@ -349,6 +355,8 @@ namespace libBAUtilCS
     /// </summary>
     /// <param name="text">Output text</param>
     /// <param name="indentBy">Number of leading spaces</param>
+    /// <param name="bgColor">Background color.</param>
+    /// <param name="fgColor">Foreground color.</param>
     /// <param name="addNewLine">Add a new line after the last line of <paramref name="text"/></param>
     public static void WriteError(string text, Int32 indentBy, ConsoleColor fgColor = ConsoleColor.Red, ConsoleColor bgColor = ConsoleColor.Black, bool addNewLine = true)
     {
@@ -365,6 +373,8 @@ namespace libBAUtilCS
     /// </summary>
     /// <param name="text">Output text</param>
     /// <param name="indentBy">Number of leading spaces</param>
+    /// <param name="bgColor">Background color.</param>
+    /// <param name="fgColor">Foreground color.</param>
     /// <param name="addNewLine">Add a new line after the last line of <paramref name="text"/></param>
     public static void WriteError(string[] text, Int32 indentBy, ConsoleColor fgColor = ConsoleColor.Red, ConsoleColor bgColor = ConsoleColor.Black, bool addNewLine = true)
     {
@@ -432,12 +442,14 @@ namespace libBAUtilCS
     /// <param name="authorName">Application developer name</param>
     /// <param name="companyName">Company / Copyright holder name</param>
     /// <param name="lineSeparator">Line separator</param>
-    public ConsoleHelper(string authorName, string companyName, string lineSeparator)
+    /// <param name="startYear">The copyright's starting year</param>
+    public ConsoleHelper(string authorName, string companyName, string lineSeparator, Int32 startYear = -1)
     {
       ConsoleData.Author = authorName;
       ConsoleData.Company = companyName;
       ConsoleData.LineSeparator = lineSeparator;
-    } // ConsoleHelper(string authorName, string companyName, string lineSeparator)
+      ConsoleData.StartYear = startYear;
+    } // ConsoleHelper(string authorName, string companyName, string lineSeparator, Int32 startYear = -1)
 
     #endregion
 
@@ -497,6 +509,26 @@ namespace libBAUtilCS
         System.Threading.Thread.Sleep(mThdSpinDelay);
       } while (true);
 
+    }
+
+    /// <summary>
+    /// Construct a copyright notice's year string
+    /// </summary>
+    /// <param name="startYear">The year the copyright started to apply.</param>
+    /// <returns></returns>
+    private static String GetYearsString(Int32 startYear)
+    {
+      DateTime currentYear = DateTime.Now;
+
+      if (startYear >= currentYear.Year)
+        return currentYear.Year.ToString();
+      else
+      {
+        if (startYear > 0)
+          return startYear.ToString() + "-" + currentYear.Year.ToString();
+        else
+          return currentYear.Year.ToString();
+      }
     }
 
   }  // class ConsoleHelper
