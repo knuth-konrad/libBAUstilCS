@@ -70,11 +70,47 @@ namespace libBAUtilCS
     /// <remarks>
     /// Source: https://stackoverflow.com/questions/7332393/how-can-i-query-the-path-to-an-nlog-log-file
     /// </remarks>
-    public static string GetNLogCurrentLogFile()
+    public static String GetNLogCurrentLogFile()
     {
       NLog.Targets.FileTarget fileTarget = LogManager.Configuration.AllTargets.FirstOrDefault(t => t is NLog.Targets.FileTarget) as NLog.Targets.FileTarget;
-      return fileTarget == null ? string.Empty : fileTarget.FileName.Render(new LogEventInfo { Level = LogLevel.Info });
+      return fileTarget == null ? String.Empty : fileTarget.FileName.Render(new LogEventInfo { Level = LogLevel.Info });
     } // GetNLogCurrentLogFile()
+
+    /// <summary>
+    /// Sets the current (text) log file's name and path
+    /// </summary>
+    /// <param name="newLogfile">NLog's new log file incl. full path</param>
+    /// <param name="targetFilename">
+    /// Set the name for this file target. If <see cref="String.Empty"/>, set the first <see cref="NLog.Targets.FileTarget"/>'s file name.
+    /// </param>
+    /// <returns>NLog's previous log file incl. full path</returns>
+    /// <remarks>
+    /// Source: https://capnjosh.com/blog/programatically-change-a-logging-targets-path-and-file-name-for-nlog/
+    /// </remarks>
+    public static String SetNLogCurrentLogFile(String newLogfile, String targetFilename = "")
+    {
+
+      NLog.Targets.FileTarget target;
+      String oldLog = libECKDUtilCS.LoggingHelper.GetNLogCurrentLogFile();
+
+      if (targetFilename.Length < 1)
+      {
+        target = LogManager.Configuration.AllTargets.FirstOrDefault(t => t is NLog.Targets.FileTarget) as NLog.Targets.FileTarget;
+      }
+      else
+      {
+        target = (NLog.Targets.FileTarget)NLog.LogManager.Configuration.FindTargetByName(targetFilename);
+      }
+
+      if (target != null)
+      {
+        target.FileName = newLogfile;
+        NLog.LogManager.ReconfigExistingLoggers();
+      }
+
+      return oldLog;
+
+    } // SetNLogCurrentLogFile()
 
   } // class LoggingHelper
 }

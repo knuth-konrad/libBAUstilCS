@@ -16,6 +16,9 @@ libBAUtilCS.dt
 # Sample data
 DATA/*
 
+# WinMerge backups
+*.bak
+
 # Build results
 [Dd]ebug/
 [Dd]ebugPublic/

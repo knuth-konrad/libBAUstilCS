@@ -58,5 +58,4 @@ namespace libBAUtilCS
     }  // TxtWriteLine
 
   }  // class FileUtil
-
 }

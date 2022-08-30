@@ -407,7 +407,7 @@ namespace libBAUtilCS.Utils.Args
     /// <summary>
     /// Determine if a certain parameter is present
     /// </summary>
-    /// <param name="paramList>">List of parameter names (<see cref="KeyValue.Key"/>)</param>
+    /// <param name="paramList">List of parameter names (<see cref="KeyValue.Key"/>)</param>
     /// <returns>
     /// <see langword="true"/> if all parameters passed are present, otherwise <see langword="false"/>
     /// </returns>

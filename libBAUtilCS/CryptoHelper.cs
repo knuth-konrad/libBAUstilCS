@@ -103,7 +103,7 @@ namespace libBAUtilCS
       public string DecryptString(string cipherText, string passPhrase = "")
       {
 
-         // Passphrase d set on object initialization?
+         // Passphrase set on object initialization?
          if (passPhrase == String.Empty && Passphrase != String.Empty)
          {
             passPhrase = Passphrase;
